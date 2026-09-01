@@ -58,7 +58,7 @@ export function ExerciseRow({
           aria-label="Subir exercício"
           disabled={!canMoveUp}
           onClick={() => onMove(-1)}
-          className="text-graphite-soft disabled:opacity-30"
+          className="text-graphite-soft hover:text-graphite transition-transform active:scale-90 disabled:opacity-30"
         >
           ↑
         </button>
@@ -67,7 +67,7 @@ export function ExerciseRow({
           aria-label="Descer exercício"
           disabled={!canMoveDown}
           onClick={() => onMove(1)}
-          className="text-graphite-soft disabled:opacity-30"
+          className="text-graphite-soft hover:text-graphite transition-transform active:scale-90 disabled:opacity-30"
         >
           ↓
         </button>
@@ -76,7 +76,7 @@ export function ExerciseRow({
         type="button"
         aria-label="Remover exercício"
         onClick={onRemove}
-        className="text-graphite-soft hover:text-rust px-1"
+        className="text-graphite-soft hover:text-rust px-1 transition-colors active:scale-90"
       >
         ×
       </button>

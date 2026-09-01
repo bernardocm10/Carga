@@ -68,7 +68,7 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
                 type="button"
                 aria-label={`Remover série ${index + 1}`}
                 onClick={() => removeSet(date, exercise.name, index)}
-                className="text-graphite-soft hover:text-rust"
+                className="text-graphite-soft hover:text-rust transition-colors active:scale-90"
               >
                 ×
               </button>

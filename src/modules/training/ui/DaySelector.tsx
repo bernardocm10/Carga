@@ -39,9 +39,10 @@ export function DaySelector({
               onClick={() => onSelectWeekday(day.weekday)}
               className={cn(
                 'font-display flex-1 rounded border py-2 text-xs tracking-wide uppercase',
+                'transition-colors duration-150 active:scale-[0.97]',
                 isActive
                   ? 'border-iron bg-iron text-chalk'
-                  : 'border-hairline bg-chalk text-graphite-soft',
+                  : 'border-hairline bg-chalk text-graphite-soft hover:text-graphite',
               )}
             >
               {WEEKDAY_SHORT[day.weekday]}
