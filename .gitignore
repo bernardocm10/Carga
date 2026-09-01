@@ -1,0 +1,29 @@
+# deps
+node_modules/
+
+# build
+dist/
+dist-ssr/
+
+# Capacitor / Android native build output (native config itself IS committed)
+android/app/build/
+android/build/
+android/.gradle/
+android/app/src/main/assets/public/
+android/local.properties
+*.apk
+*.aab
+
+# env
+.env
+.env.*
+!.env.example
+
+# tooling caches
+.eslintcache
+coverage/
+.vite/
+
+# editor / OS
+.DS_Store
+*.log
