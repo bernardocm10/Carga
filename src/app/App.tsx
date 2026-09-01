@@ -10,12 +10,14 @@ export function App() {
   const { Screen } = active
 
   return (
-    <div className="flex min-h-dvh flex-col bg-concrete text-graphite">
+    <div className="bg-concrete text-graphite flex min-h-dvh flex-col">
       <main className="flex-1 overflow-y-auto">
-        <Screen />
+        <div key={active.id} className="cg-enter">
+          <Screen />
+        </div>
       </main>
 
-      <nav className="flex border-t border-hairline bg-chalk">
+      <nav className="border-hairline bg-chalk flex border-t">
         {TABS.map((tab) => {
           const Icon = tab.icon
           const isActive = tab.id === active.id
@@ -26,8 +28,9 @@ export function App() {
               aria-current={isActive ? 'page' : undefined}
               onClick={() => setActiveId(tab.id)}
               className={cn(
-                'flex flex-1 flex-col items-center gap-1 py-2 font-display text-xs uppercase tracking-wide',
-                isActive ? 'text-iron' : 'text-graphite-soft',
+                'font-display flex flex-1 flex-col items-center gap-1 py-2 text-xs tracking-wide uppercase',
+                'transition-colors duration-150 active:scale-95',
+                isActive ? 'text-iron' : 'text-graphite-soft hover:text-graphite',
               )}
             >
               <Icon size={20} aria-hidden />

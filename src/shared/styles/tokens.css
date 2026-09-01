@@ -39,3 +39,49 @@
     font-family: var(--font-body);
   }
 }
+
+/* Motion — entrada/saída de itens e troca de aba, sem lib. */
+@keyframes cg-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cg-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes cg-saved {
+  from {
+    background-color: color-mix(in srgb, var(--color-tatami) 20%, transparent);
+  }
+}
+
+.cg-enter {
+  animation: cg-enter 180ms ease-out both;
+}
+
+.cg-leave {
+  animation: cg-leave 140ms ease-in forwards;
+}
+
+.cg-saved {
+  animation: cg-saved 600ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
