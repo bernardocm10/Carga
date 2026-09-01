@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import type { Exercise } from '@/entities/config'
 import { useTrainingLog, useTrainingLogStore } from '@/entities/training-log'
+import { Button } from '@/shared/ui/Button'
 import { NumberField } from '@/shared/ui/NumberField'
 import { lastLoadForExercise } from '../domain/lastLoad'
 
@@ -91,12 +92,9 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
           placeholder="0"
           className="w-full"
         />
-        <button
-          type="submit"
-          className="bg-iron font-display text-chalk rounded px-4 py-2 text-sm tracking-wide uppercase"
-        >
+        <Button type="submit" className="px-3">
           +
-        </button>
+        </Button>
       </form>
     </div>
   )

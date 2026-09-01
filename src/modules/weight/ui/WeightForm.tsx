@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Button } from '@/shared/ui/Button'
 import { NumberField } from '@/shared/ui/NumberField'
 import { toISODate } from '@/shared/date/week'
 import { useWeightLogStore } from '@/entities/weight-log'
@@ -42,12 +43,7 @@ export function WeightForm() {
           className="border-hairline bg-chalk text-graphite focus:border-iron rounded border px-3 py-2 font-mono focus:outline-none"
         />
       </label>
-      <button
-        type="submit"
-        className="bg-iron font-display text-chalk rounded px-4 py-2 text-sm tracking-wide uppercase"
-      >
-        Salvar
-      </button>
+      <Button type="submit">Salvar</Button>
     </form>
   )
 }

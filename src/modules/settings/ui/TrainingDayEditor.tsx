@@ -1,5 +1,6 @@
 import type { Config, TrainingDay } from '@/entities/config'
 import { useConfig, useConfigStore } from '@/entities/config'
+import { Button } from '@/shared/ui/Button'
 import { addExercise, moveExercise, removeExercise, setExercise } from '../domain/editConfig'
 import { ExerciseRow } from './ExerciseRow'
 
@@ -32,15 +33,15 @@ export function TrainingDayEditor({ day }: Props) {
         />
       ))}
 
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         onClick={() =>
           apply(addExercise(config, day.weekday, { name: 'Novo exercício', sets: 3, reps: '8-12' }))
         }
-        className="border-hairline text-graphite-soft font-display self-start rounded border border-dashed px-3 py-2 text-xs tracking-wide uppercase"
+        className="self-start px-3 text-xs"
       >
         + Adicionar exercício
-      </button>
+      </Button>
     </div>
   )
 }
