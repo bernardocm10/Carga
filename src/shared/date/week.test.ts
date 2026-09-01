@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mondayFirstIndex, toISODate, weekDates } from './week'
+import { addDays, mondayFirstIndex, toISODate, weekDates } from './week'
 
 describe('toISODate', () => {
   it('formata com zero à esquerda', () => {
@@ -8,6 +8,24 @@ describe('toISODate', () => {
 
   it('usa o dia local, não UTC', () => {
     expect(toISODate(new Date(2026, 11, 31, 23, 30))).toBe('2026-12-31')
+  })
+})
+
+describe('addDays', () => {
+  it('soma dias', () => {
+    expect(addDays('2026-08-10', 6)).toBe('2026-08-16')
+  })
+
+  it('subtrai dias', () => {
+    expect(addDays('2026-08-10', -7)).toBe('2026-08-03')
+  })
+
+  it('atravessa a virada de mês pra trás', () => {
+    expect(addDays('2026-03-03', -7)).toBe('2026-02-24')
+  })
+
+  it('atravessa a virada de ano', () => {
+    expect(addDays('2026-01-02', -5)).toBe('2025-12-28')
   })
 })
 

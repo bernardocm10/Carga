@@ -9,6 +9,13 @@ export function toISODate(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
+/** Soma `days` (pode ser negativo) a uma data ISO `YYYY-MM-DD`, devolvendo ISO. */
+export function addDays(iso: string, days: number): string {
+  const parts = iso.split('-')
+  const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]) + days)
+  return toISODate(date)
+}
+
 /** Índice da semana começando na segunda: segunda = 0 ... domingo = 6. */
 export function mondayFirstIndex(date: Date): number {
   return (date.getDay() + 6) % 7
