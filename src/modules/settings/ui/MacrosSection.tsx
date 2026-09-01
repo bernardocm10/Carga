@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { Macros } from '@/entities/config'
 import { useConfig, useConfigStore } from '@/entities/config'
+import { cn } from '@/shared/lib/cn'
+import { useSavedFlash } from '@/shared/lib/useSavedFlash'
 import { NumberField } from '@/shared/ui/NumberField'
 import { setCalories, setMacro } from '../domain/editConfig'
 
@@ -13,6 +15,7 @@ type EditorProps = {
 
 function NumberEditor({ label, initial, min, onCommit }: EditorProps) {
   const [text, setText] = useState(String(initial))
+  const [saved, flash] = useSavedFlash()
   const commit = () => {
     const value = Math.round(Number(text.replace(',', '.')))
     if (!Number.isFinite(value) || value < min) {
@@ -20,6 +23,7 @@ function NumberEditor({ label, initial, min, onCommit }: EditorProps) {
       return
     }
     onCommit(value)
+    flash()
   }
   return (
     <NumberField
@@ -27,6 +31,7 @@ function NumberEditor({ label, initial, min, onCommit }: EditorProps) {
       value={text}
       onChange={(event) => setText(event.target.value)}
       onBlur={commit}
+      className={cn(saved && 'cg-saved')}
     />
   )
 }

@@ -1,12 +1,38 @@
 import { useState, type FormEvent } from 'react'
 import type { Exercise } from '@/entities/config'
 import { useTrainingLog, useTrainingLogStore } from '@/entities/training-log'
+import { cn } from '@/shared/lib/cn'
+import { useLeave } from '@/shared/lib/useLeave'
 import { Button } from '@/shared/ui/Button'
 import { NumberField } from '@/shared/ui/NumberField'
 import { lastLoadForExercise } from '../domain/lastLoad'
 
 function dayMonth(iso: string): string {
   return `${iso.slice(8, 10)}/${iso.slice(5, 7)}`
+}
+
+type SetChipProps = { label: string; index: number; onRemove: () => void }
+
+function SetChip({ label, index, onRemove }: SetChipProps) {
+  const { leaving, leave } = useLeave(onRemove)
+  return (
+    <li
+      className={cn(
+        'border-hairline text-graphite flex items-center gap-2 rounded border px-2 py-1 font-mono text-sm',
+        leaving ? 'cg-leave' : 'cg-enter',
+      )}
+    >
+      {label}
+      <button
+        type="button"
+        aria-label={`Remover série ${index + 1}`}
+        onClick={leave}
+        className="text-graphite-soft hover:text-rust transition-colors active:scale-90"
+      >
+        ×
+      </button>
+    </li>
+  )
 }
 
 type Props = {
@@ -59,20 +85,12 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
       {loggedSets.length > 0 && (
         <ul className="flex flex-wrap gap-2">
           {loggedSets.map((set, index) => (
-            <li
+            <SetChip
               key={index}
-              className="border-hairline text-graphite flex items-center gap-2 rounded border px-2 py-1 font-mono text-sm"
-            >
-              {set.weight}kg × {set.reps}
-              <button
-                type="button"
-                aria-label={`Remover série ${index + 1}`}
-                onClick={() => removeSet(date, exercise.name, index)}
-                className="text-graphite-soft hover:text-rust transition-colors active:scale-90"
-              >
-                ×
-              </button>
-            </li>
+              index={index}
+              label={`${set.weight}kg × ${set.reps}`}
+              onRemove={() => removeSet(date, exercise.name, index)}
+            />
           ))}
         </ul>
       )}

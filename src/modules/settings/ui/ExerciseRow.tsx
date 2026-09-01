@@ -1,4 +1,6 @@
 import type { Exercise } from '@/entities/config'
+import { cn } from '@/shared/lib/cn'
+import { useLeave } from '@/shared/lib/useLeave'
 import { NumberField } from '@/shared/ui/NumberField'
 import { TextField } from '@/shared/ui/TextField'
 
@@ -19,8 +21,15 @@ export function ExerciseRow({
   onRemove,
   onMove,
 }: Props) {
+  const { leaving, leave } = useLeave(onRemove)
+
   return (
-    <div className="border-hairline flex items-end gap-2 rounded border p-2">
+    <div
+      className={cn(
+        'border-hairline flex items-end gap-2 rounded border p-2',
+        leaving ? 'cg-leave' : 'cg-enter',
+      )}
+    >
       <TextField
         label="Exercício"
         defaultValue={exercise.name}
@@ -75,7 +84,7 @@ export function ExerciseRow({
       <button
         type="button"
         aria-label="Remover exercício"
-        onClick={onRemove}
+        onClick={leave}
         className="text-graphite-soft hover:text-rust px-1 transition-colors active:scale-90"
       >
         ×
