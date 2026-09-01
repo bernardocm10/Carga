@@ -4,14 +4,14 @@
 
 ## 4.1 Arquivos
 
-| Tipo | Convenção | Exemplo |
-|---|---|---|
-| Componente / tela | `PascalCase.tsx` | `TodayScreen.tsx`, `LoadedBar.tsx` |
-| Lógica / util / hook | `camelCase.ts` | `weightProtocol.ts`, `useWeightLog.ts` |
-| Repo de entity | `<name>.repo.ts` | `config.repo.ts` |
-| Store de entity | `<name>.store.ts` | `weight-log.store.ts` |
-| Teste | co-localizado, `*.test.ts(x)` | `weightProtocol.test.ts` |
-| Barrel / fachada | `index.ts` | um por `module` e por `entity` |
+| Tipo                 | Convenção                     | Exemplo                                |
+| -------------------- | ----------------------------- | -------------------------------------- |
+| Componente / tela    | `PascalCase.tsx`              | `TodayScreen.tsx`, `LoadedBar.tsx`     |
+| Lógica / util / hook | `camelCase.ts`                | `weightProtocol.ts`, `useWeightLog.ts` |
+| Repo de entity       | `<name>.repo.ts`              | `config.repo.ts`                       |
+| Store de entity      | `<name>.store.ts`             | `weight-log.store.ts`                  |
+| Teste                | co-localizado, `*.test.ts(x)` | `weightProtocol.test.ts`               |
+| Barrel / fachada     | `index.ts`                    | um por `module` e por `entity`         |
 
 Pastas de `entities` em `kebab-case` (`weight-log`). Pastas de `modules` em uma palavra (`weight`, `training`).
 
@@ -21,7 +21,8 @@ Pastas de `entities` em `kebab-case` (`weight-log`). Pastas de `modules` em uma 
 - **`type` para dados, `interface` só quando precisa `extends`/merge.**
 - Componente: função nomeada, props tipadas com `type Props`, **sem default export** (exceto onde `React.lazy` exigir).
 - Componente passou de **~150 linhas** → quebrar.
-- Função: pequena, early return, sem `else` depois de `return`. Comentário explica **porquê**, nunca **o quê**.
+- Função: pequena, early return, sem `else` depois de `return`.
+- **Comentário só quando estritamente necessário**: um **porquê** não óbvio, uma decisão que evita um "conserto" errado, ou um ponteiro pra doc externa. Nunca reafirma o que o código já diz. Sem comentário-título de seção, sem JSDoc que só repete o nome da função/campo.
 - Imports ordenados: externos → `@/` (aliases internos) → relativos. Linha em branco entre grupos.
 - Nada de lógica assíncrona onde não precisa — `localStorage` é síncrono; a camada `repo` é síncrona.
 - Strings de UI em PT-BR, inline no JSX. Sem catálogo de i18n na v1.

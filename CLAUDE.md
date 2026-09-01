@@ -18,6 +18,7 @@ app  →  modules  →  entities  →  shared
 - Cruzar fronteira **só pelo `index.ts`** da pasta de destino. Import profundo é erro de lint.
 - **Lógica de negócio nunca em componente** — vai pra `domain/`, com **TDD** (teste primeiro).
 - Aba nova = `modules/<nova>/` + 1 linha em `app/tabs.ts`.
+- Comentário só quando estritamente necessário (ver [doc 04](docs/padroes/04-nomenclatura-e-estilo/README.md)).
 
 ## Comandos
 
@@ -29,7 +30,7 @@ app  →  modules  →  entities  →  shared
 ## Git (ver [doc 08](docs/padroes/08-git-e-commits/README.md))
 
 - Branch por feature (`feat/<slug>`), nunca direto na `main`.
-- Commit **de uma linha**: `type(scope): resumo` — imperativo, inglês, sem ponto final.
+- Commit **de uma linha**: `type: [scope] - resumo` — imperativo, inglês, sem ponto final; sem escopo natural → só `type: resumo`.
 - **Sem co-authoring.** Nenhum trailer `Co-authored-by`.
 - Commit granular, a cada mudança que valha salvar.
 - Pre-commit roda Prettier + ESLint + testes; não commitar com suíte vermelha ou `typecheck` sujo.
