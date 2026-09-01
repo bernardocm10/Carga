@@ -28,6 +28,6 @@ Pastas de `entities` em `kebab-case` (`weight-log`). Pastas de `modules` em uma 
 
 ## 4.3 Estilo visual
 
-- Tailwind com tokens no preset; a paleta e as 3 famílias de fonte do [`app_arquitetura_v1.md` §5](../../app_arquitetura_v1.md) são a **única** fonte de cor/tipografia. Nada de hex solto no JSX.
-- `tokens.css` espelha os mesmos valores como custom properties, para uso fora do Tailwind (ex: SVG da `LoadedBar`, Recharts).
+- Tailwind v4 com os tokens no bloco `@theme` de `shared/styles/tokens.css`; a paleta e as 3 famílias de fonte do [`app_arquitetura_v1.md` §5](../../app_arquitetura_v1.md) são a **única** fonte de cor/tipografia. Nada de hex solto no JSX — usar as utilitárias geradas (`bg-concrete`, `text-iron`, `font-display`...).
+- O `@theme` também expõe cada token como custom property (`var(--color-iron)`), para uso fora das classes (ex: SVG da `LoadedBar`, cores do Recharts).
 - Cards com borda hairline, sem sombra pesada (visual chapado). O "risco visual" é gasto só na `LoadedBar`; o resto fica quieto.

@@ -66,7 +66,7 @@ src/
 │   ├── storage/           # kvGet/kvSet<T>, schema.ts, migrations.ts, backup.ts
 │   ├── date/              # week(), dayToWorkout(), dateRange(), today()
 │   ├── lib/               # cn(), formatters
-│   └── styles/            # tokens.css, tailwind-preset.ts
+│   └── styles/            # tokens.css (@import 'tailwindcss' + @theme com a paleta/fontes)
 │
 ├── types/                 # só tipos globais/ambient de verdade
 └── main.tsx

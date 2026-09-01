@@ -7,7 +7,7 @@
 | Invólucro | React web + **Capacitor** → `.apk` | instalado no device via `adb install` / depuração USB |
 | Linguagem | **TypeScript** (`strict: true`) | sem `any`; `type` para dados, `interface` só com `extends` |
 | Build / dev | **Vite** | path alias `@/` → `src/` |
-| Estilo | **Tailwind** | paleta "logbook" e fontes mapeadas em tokens no preset |
+| Estilo | **Tailwind v4** (CSS-first) | paleta "logbook" e fontes no `@theme` de `shared/styles/tokens.css`; plugin `@tailwindcss/vite`, sem `tailwind.config` |
 | Estado | **Zustand** | um store por `entity`; sem store global monolítico |
 | Persistência | **localStorage** atrás de uma camada de acesso | chaves namespaced, versão de schema, migração, export/import |
 | Gráfico | **Recharts** | só na fatia `weight` |
