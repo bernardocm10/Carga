@@ -31,6 +31,37 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
+/*
+ * Temas — sobrescrevem só as CSS vars de cor; as utilitárias (bg-concrete...)
+ * referenciam essas vars, então nenhum componente muda. `light` é o @theme acima.
+ * Paleta quente do "logbook" mantida: penumbra = taupe escuro, escuro = quase-preto.
+ */
+:root[data-theme='dim'] {
+  --color-concrete: #33302a;
+  --color-chalk: #3d3931;
+  --color-graphite: #e9e4d8;
+  --color-graphite-soft: #a49c8b;
+  --color-iron: #6f97d6;
+  --color-brass: #d3a44e;
+  --color-tatami: #6fa886;
+  --color-rust: #cf6f61;
+  --color-hairline: #4c463c;
+  color-scheme: dark;
+}
+
+:root[data-theme='dark'] {
+  --color-concrete: #15130f;
+  --color-chalk: #201d18;
+  --color-graphite: #edeae1;
+  --color-graphite-soft: #948c7c;
+  --color-iron: #7ea2df;
+  --color-brass: #dcae54;
+  --color-tatami: #77b28a;
+  --color-rust: #d97365;
+  --color-hairline: #332e27;
+  color-scheme: dark;
+}
+
 @layer base {
   html,
   body {

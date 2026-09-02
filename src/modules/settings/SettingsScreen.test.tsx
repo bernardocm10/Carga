@@ -3,11 +3,14 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { Config } from '@/entities/config'
 import { CONFIG_SEED, useConfigStore } from '@/entities/config'
+import { useThemeStore } from '@/shared/theme'
 import { SettingsScreen } from './SettingsScreen'
 
 beforeEach(() => {
   localStorage.clear()
   useConfigStore.getState().replaceConfig(CONFIG_SEED)
+  useThemeStore.setState({ theme: 'light' })
+  delete document.documentElement.dataset.theme
 })
 
 function storedConfig(): Config {
@@ -25,6 +28,16 @@ describe('SettingsScreen', () => {
     await user.tab()
 
     expect(storedConfig().macros.protein).toBe(185)
+  })
+
+  it('troca o tema e persiste', async () => {
+    const user = userEvent.setup()
+    render(<SettingsScreen />)
+
+    await user.click(screen.getByRole('button', { name: 'Escuro' }))
+
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(JSON.parse(localStorage.getItem('cg:theme') ?? 'null')).toBe('dark')
   })
 
   it('abre um dia só ao tocar no cabeçalho', async () => {

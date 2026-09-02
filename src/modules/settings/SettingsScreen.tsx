@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useConfig } from '@/entities/config'
+import { AppearanceSection } from './ui/AppearanceSection'
 import { MacrosSection } from './ui/MacrosSection'
 import { TrainingDayEditor } from './ui/TrainingDayEditor'
 
@@ -27,6 +28,8 @@ export function SettingsScreen() {
           />
         ))}
       </div>
+
+      <AppearanceSection />
     </section>
   )
 }
