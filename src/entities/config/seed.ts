@@ -5,8 +5,9 @@ import type { Config } from './config.types'
  * o que vale é o que está salvo (editável pela aba Ajustes).
  * Valores validados em app_arquitetura_v1.md §3.1.
  *
- * A lista de exercícios de cada dia ainda não foi fechada — os dias existem
- * com nome/foco e `exercises: []`; preencher pela aba Ajustes ou numa conversa.
+ * Split de 5 dias (seg–sex) + sáb/dom de descanso. `rir` e agrupamento por
+ * músculo do plano original não cabem no modelo (`Exercise` = nome/sets/reps);
+ * ajuste fino é pela aba Ajustes.
  */
 export const CONFIG_SEED: Config = {
   targetCalories: 3150,
@@ -26,12 +27,83 @@ export const CONFIG_SEED: Config = {
   ],
 
   trainingSplit: [
-    { weekday: 1, name: 'Push A', focus: 'Força', exercises: [] },
-    { weekday: 2, name: 'Pull A', focus: 'Força', exercises: [] },
-    { weekday: 3, name: 'Legs A', focus: 'Força + cardio leve', exercises: [] },
-    { weekday: 4, name: 'Push B', focus: 'Hipertrofia', exercises: [] },
-    { weekday: 5, name: 'Pull B', focus: 'Hipertrofia', exercises: [] },
-    { weekday: 6, name: 'Legs B', focus: 'Hipertrofia + cardio', exercises: [] },
+    {
+      weekday: 1,
+      name: 'Ombro + Peito Sup. + Tríceps',
+      focus: 'Empurrar',
+      exercises: [
+        { name: 'Supino inclinado com halteres', sets: 3, reps: '6-10' },
+        { name: 'Supino inclinado máquina/Smith', sets: 2, reps: '8-12' },
+        { name: 'Elevação lateral na polia', sets: 4, reps: '10-20' },
+        { name: 'Elevação lateral na máquina', sets: 3, reps: '10-20' },
+        { name: 'Crucifixo inverso', sets: 3, reps: '12-20' },
+        { name: 'Tríceps francês na polia', sets: 3, reps: '8-15' },
+        { name: 'Tríceps corda', sets: 2, reps: '10-15' },
+      ],
+    },
+    {
+      weekday: 2,
+      name: 'Costas + Bíceps',
+      focus: 'Puxar',
+      exercises: [
+        { name: 'Barra fixa / puxada alta', sets: 3, reps: '6-10' },
+        { name: 'Puxada unilateral na polia', sets: 3, reps: '8-15' },
+        { name: 'Remada com apoio no peito', sets: 3, reps: '8-12' },
+        { name: 'Remada baixa ao quadril', sets: 2, reps: '10-15' },
+        { name: 'Crucifixo inverso', sets: 2, reps: '12-20' },
+        { name: 'Rosca inclinada com halteres', sets: 3, reps: '8-15' },
+        { name: 'Rosca scott', sets: 2, reps: '8-15' },
+        { name: 'Rosca martelo', sets: 3, reps: '8-15' },
+      ],
+    },
+    {
+      weekday: 3,
+      name: 'Pernas — quadríceps',
+      focus: 'Pernas + core',
+      exercises: [
+        { name: 'Agachamento hack', sets: 3, reps: '6-10' },
+        { name: 'Leg press', sets: 3, reps: '8-15' },
+        { name: 'Cadeira extensora', sets: 3, reps: '10-15' },
+        { name: 'Terra romeno', sets: 2, reps: '6-10' },
+        { name: 'Mesa flexora sentado', sets: 2, reps: '10-15' },
+        { name: 'Panturrilha em pé', sets: 3, reps: '8-15' },
+        { name: 'Panturrilha sentado', sets: 2, reps: '10-20' },
+        { name: 'Abdominal na polia', sets: 3, reps: '8-15' },
+        { name: 'Elevação de pernas na barra', sets: 2, reps: '8-15' },
+      ],
+    },
+    {
+      weekday: 4,
+      name: 'Ombro + Braços',
+      focus: 'Ombro + braços',
+      exercises: [
+        { name: 'Elevação lateral na máquina', sets: 4, reps: '10-20' },
+        { name: 'Elevação lateral na polia', sets: 3, reps: '12-20' },
+        { name: 'Crucifixo inverso', sets: 2, reps: '12-20' },
+        { name: 'Rosca inclinada com halteres', sets: 2, reps: '8-15' },
+        { name: 'Rosca scott', sets: 2, reps: '10-15' },
+        { name: 'Rosca martelo', sets: 2, reps: '10-15' },
+        { name: 'Tríceps francês na polia', sets: 3, reps: '8-15' },
+        { name: 'Tríceps corda', sets: 3, reps: '8-15' },
+        { name: 'Serrátil na polia', sets: 2, reps: '10-20' },
+      ],
+    },
+    {
+      weekday: 5,
+      name: 'Posterior + Glúteo',
+      focus: 'Pernas — posterior',
+      exercises: [
+        { name: 'Terra romeno', sets: 3, reps: '6-10' },
+        { name: 'Mesa flexora', sets: 3, reps: '8-15' },
+        { name: 'Agachamento hack', sets: 2, reps: '8-12' },
+        { name: 'Agachamento búlgaro', sets: 2, reps: '8-12' },
+        { name: 'Cadeira extensora', sets: 2, reps: '10-15' },
+        { name: 'Elevação pélvica', sets: 2, reps: '8-12' },
+        { name: 'Panturrilha em pé', sets: 3, reps: '8-15' },
+        { name: 'Abdominal na polia', sets: 2, reps: '8-15' },
+      ],
+    },
+    { weekday: 6, name: 'Descanso', focus: '—', exercises: [] },
     { weekday: 0, name: 'Descanso', focus: '—', exercises: [] },
   ],
 }

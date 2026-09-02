@@ -13,6 +13,10 @@ beforeEach(() => {
 
 describe('TrainingScreen', () => {
   it('mostra o empty-state num dia sem exercícios', () => {
+    useConfigStore.getState().replaceConfig({
+      ...CONFIG_SEED,
+      trainingSplit: CONFIG_SEED.trainingSplit.map((day) => ({ ...day, exercises: [] })),
+    })
     render(<TrainingScreen />)
     expect(screen.getByRole('heading', { name: /treino/i })).toBeInTheDocument()
     expect(screen.getByText(/configure na aba ajustes/i)).toBeInTheDocument()

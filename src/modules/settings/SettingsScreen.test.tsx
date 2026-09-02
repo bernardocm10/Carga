@@ -29,6 +29,10 @@ describe('SettingsScreen', () => {
 
   it('adiciona um exercício a um dia de treino', async () => {
     const user = userEvent.setup()
+    useConfigStore.getState().replaceConfig({
+      ...CONFIG_SEED,
+      trainingSplit: CONFIG_SEED.trainingSplit.map((day) => ({ ...day, exercises: [] })),
+    })
     render(<SettingsScreen />)
 
     const addButtons = screen.getAllByRole('button', { name: /adicionar exercício/i })
