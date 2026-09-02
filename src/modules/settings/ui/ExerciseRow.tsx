@@ -26,69 +26,72 @@ export function ExerciseRow({
   return (
     <div
       className={cn(
-        'border-hairline flex items-end gap-2 rounded border p-2',
+        'border-hairline flex flex-col gap-2 rounded border p-2',
         leaving ? 'cg-leave' : 'cg-enter',
       )}
     >
       <TextField
         label="Exercício"
         defaultValue={exercise.name}
-        className="min-w-0 flex-1 text-base"
         onBlur={(event) => {
           const value = event.target.value.trim()
           if (value && value !== exercise.name) onPatch({ name: value })
           else event.target.value = exercise.name
         }}
       />
-      <NumberField
-        label="Séries"
-        defaultValue={exercise.sets}
-        className="w-14 text-base"
-        onBlur={(event) => {
-          const value = Math.round(Number(event.target.value))
-          if (Number.isFinite(value) && value > 0) {
-            if (value !== exercise.sets) onPatch({ sets: value })
-          } else event.target.value = String(exercise.sets)
-        }}
-      />
-      <TextField
-        label="Reps"
-        defaultValue={exercise.reps}
-        className="w-16 text-base"
-        onBlur={(event) => {
-          const value = event.target.value.trim()
-          if (value && value !== exercise.reps) onPatch({ reps: value })
-          else event.target.value = exercise.reps
-        }}
-      />
-      <div className="flex flex-col">
-        <button
-          type="button"
-          aria-label="Subir exercício"
-          disabled={!canMoveUp}
-          onClick={() => onMove(-1)}
-          className="text-graphite-soft hover:text-graphite transition-transform active:scale-90 disabled:opacity-30"
-        >
-          ↑
-        </button>
-        <button
-          type="button"
-          aria-label="Descer exercício"
-          disabled={!canMoveDown}
-          onClick={() => onMove(1)}
-          className="text-graphite-soft hover:text-graphite transition-transform active:scale-90 disabled:opacity-30"
-        >
-          ↓
-        </button>
+
+      <div className="flex items-end gap-2">
+        <NumberField
+          label="Séries"
+          defaultValue={exercise.sets}
+          className="w-16 shrink-0"
+          onBlur={(event) => {
+            const value = Math.round(Number(event.target.value))
+            if (Number.isFinite(value) && value > 0) {
+              if (value !== exercise.sets) onPatch({ sets: value })
+            } else event.target.value = String(exercise.sets)
+          }}
+        />
+        <TextField
+          label="Reps"
+          defaultValue={exercise.reps}
+          className="w-24 shrink-0"
+          onBlur={(event) => {
+            const value = event.target.value.trim()
+            if (value && value !== exercise.reps) onPatch({ reps: value })
+            else event.target.value = exercise.reps
+          }}
+        />
+
+        <div className="text-graphite-soft ml-auto flex items-center gap-3 pb-2 text-lg">
+          <button
+            type="button"
+            aria-label="Subir exercício"
+            disabled={!canMoveUp}
+            onClick={() => onMove(-1)}
+            className="hover:text-graphite transition-transform active:scale-90 disabled:opacity-30"
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            aria-label="Descer exercício"
+            disabled={!canMoveDown}
+            onClick={() => onMove(1)}
+            className="hover:text-graphite transition-transform active:scale-90 disabled:opacity-30"
+          >
+            ↓
+          </button>
+          <button
+            type="button"
+            aria-label="Remover exercício"
+            onClick={leave}
+            className="hover:text-rust transition-colors active:scale-90"
+          >
+            ×
+          </button>
+        </div>
       </div>
-      <button
-        type="button"
-        aria-label="Remover exercício"
-        onClick={leave}
-        className="text-graphite-soft hover:text-rust px-1 transition-colors active:scale-90"
-      >
-        ×
-      </button>
     </div>
   )
 }

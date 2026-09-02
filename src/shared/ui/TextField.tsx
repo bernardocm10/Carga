@@ -8,7 +8,7 @@ type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
 export function TextField({ label, id, className, ...rest }: Props) {
   const inputId = id ?? `tf-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
   return (
-    <label htmlFor={inputId} className="flex flex-col gap-1">
+    <label htmlFor={inputId} className={cn('flex flex-col gap-1', className)}>
       <span className="font-display text-graphite-soft text-xs tracking-wide uppercase">
         {label}
       </span>
@@ -16,9 +16,8 @@ export function TextField({ label, id, className, ...rest }: Props) {
         id={inputId}
         type="text"
         className={cn(
-          'border-hairline bg-chalk text-graphite rounded border px-3 py-2 font-mono text-lg',
+          'border-hairline bg-chalk text-graphite w-full rounded border px-3 py-2 font-mono text-lg',
           'focus:border-iron transition-colors focus:outline-none',
-          className,
         )}
         {...rest}
       />
