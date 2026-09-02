@@ -27,7 +27,18 @@ describe('SettingsScreen', () => {
     expect(storedConfig().macros.protein).toBe(185)
   })
 
-  it('adiciona um exercício a um dia de treino', async () => {
+  it('abre um dia só ao tocar no cabeçalho', async () => {
+    const user = userEvent.setup()
+    render(<SettingsScreen />)
+
+    expect(screen.queryByRole('button', { name: /adicionar exercício/i })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /ombro \+ peito sup/i }))
+
+    expect(screen.getByRole('button', { name: /adicionar exercício/i })).toBeInTheDocument()
+  })
+
+  it('adiciona um exercício ao dia aberto', async () => {
     const user = userEvent.setup()
     useConfigStore.getState().replaceConfig({
       ...CONFIG_SEED,
@@ -35,8 +46,8 @@ describe('SettingsScreen', () => {
     })
     render(<SettingsScreen />)
 
-    const addButtons = screen.getAllByRole('button', { name: /adicionar exercício/i })
-    await user.click(addButtons[0]!)
+    await user.click(screen.getByRole('button', { name: /ombro \+ peito sup/i }))
+    await user.click(screen.getByRole('button', { name: /adicionar exercício/i }))
 
     const monday = storedConfig().trainingSplit.find((day) => day.weekday === 1)
     expect(monday?.exercises).toEqual([{ name: 'Novo exercício', sets: 3, reps: '8-12' }])
@@ -57,6 +68,7 @@ describe('SettingsScreen', () => {
     })
     render(<SettingsScreen />)
 
+    await user.click(screen.getByRole('button', { name: /push a/i }))
     await user.click(screen.getByRole('button', { name: /remover exercício/i }))
 
     await waitFor(() => {
