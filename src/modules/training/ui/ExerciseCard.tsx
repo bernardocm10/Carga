@@ -101,14 +101,14 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
           value={weight}
           onChange={(event) => setWeight(event.target.value)}
           placeholder="0"
-          className="w-full"
+          className="flex-1"
         />
         <NumberField
           label="Reps"
           value={reps}
           onChange={(event) => setReps(event.target.value)}
           placeholder="0"
-          className="w-full"
+          className="flex-1"
         />
         <Button type="submit" className="px-3">
           +
