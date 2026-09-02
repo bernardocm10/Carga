@@ -6,8 +6,11 @@
  * quando o primeiro formato persistido mudar.
  */
 import { useConfigStore } from '@/entities/config'
+import { applyTheme, loadTheme } from '@/shared/theme'
 
 export function bootstrap(): void {
   // acessar o estado dispara loadConfig() -> semeia o storage se preciso
   useConfigStore.getState()
+  // o script inline no index.html já cobriu o 1º paint; aqui reconcilia
+  applyTheme(loadTheme())
 }

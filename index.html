@@ -3,8 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>claudgym</title>
+    <script>
+      // aplica o tema salvo antes do paint — evita flash de tela clara no modo escuro
+      try {
+        var t = JSON.parse(localStorage.getItem('cg:theme'))
+        if (t === 'dim' || t === 'dark') document.documentElement.dataset.theme = t
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
