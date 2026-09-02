@@ -10,14 +10,14 @@ export function App() {
   const { Screen } = active
 
   return (
-    <div className="bg-concrete text-graphite flex h-dvh flex-col overflow-hidden">
+    <div className="bg-concrete text-graphite flex h-dvh flex-col overflow-hidden pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pl-[env(safe-area-inset-left)]">
       <main className="min-h-0 flex-1 overflow-y-auto">
         <div key={active.id} className="cg-enter">
           <Screen />
         </div>
       </main>
 
-      <nav className="border-hairline bg-chalk flex shrink-0 border-t">
+      <nav className="border-hairline bg-chalk flex shrink-0 border-t pb-[env(safe-area-inset-bottom)]">
         {TABS.map((tab) => {
           const Icon = tab.icon
           const isActive = tab.id === active.id
