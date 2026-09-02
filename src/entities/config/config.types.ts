@@ -25,6 +25,22 @@ export type TrainingDay = {
   exercises: Exercise[]
 }
 
+export type Meal = {
+  name: string
+  /** quando/como encaixar na rotina, ex: "grab-and-go ao sair de casa" */
+  when: string
+  kcal: number
+  macros: Macros
+  /** linhas de composição prática, uma por item ou opção */
+  items: string[]
+  note?: string
+}
+
+export type MicroNote = {
+  topic: string
+  detail: string
+}
+
 export type Config = {
   targetCalories: number
   macros: Macros
@@ -36,4 +52,6 @@ export type Config = {
   weightAlertPct: number
   supplements: Supplement[]
   trainingSplit: TrainingDay[]
+  meals: Meal[]
+  micronotes: MicroNote[]
 }
