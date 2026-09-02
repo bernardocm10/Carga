@@ -4,7 +4,7 @@ import { trainingDayForDate, trainingDayForWeekday } from './config.selectors'
 
 describe('trainingDayForWeekday', () => {
   it('acha o treino de segunda-feira', () => {
-    expect(trainingDayForWeekday(CONFIG_SEED, 1)?.name).toBe('Push A')
+    expect(trainingDayForWeekday(CONFIG_SEED, 1)?.name).toBe('Ombro + Peito Sup. + Tríceps')
   })
 
   it('domingo é Descanso', () => {
@@ -19,6 +19,6 @@ describe('trainingDayForWeekday', () => {
 describe('trainingDayForDate', () => {
   it('mapeia a data pelo dia da semana', () => {
     const monday = new Date(2026, 7, 10) // 2026-08-10
-    expect(trainingDayForDate(CONFIG_SEED, monday)?.name).toBe('Push A')
+    expect(trainingDayForDate(CONFIG_SEED, monday)?.name).toBe('Ombro + Peito Sup. + Tríceps')
   })
 })
