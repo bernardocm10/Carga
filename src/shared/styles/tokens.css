@@ -1,66 +1,69 @@
 @import 'tailwindcss';
 
 /* Fontes — 2 papéis (ver app_arquitetura_v1.md §5) */
-@import '@fontsource/work-sans/400.css';
-@import '@fontsource/work-sans/500.css';
-@import '@fontsource/work-sans/600.css';
-@import '@fontsource/ibm-plex-mono/400.css';
-@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/barlow-condensed/700.css';
+@import '@fontsource/barlow-condensed/900.css';
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
 
 /*
- * Design tokens — universo "livro-razão de treino".
- * Papel de formulário contábil (greenbar), régua vermelha na margem, tinta.
- * Tailwind v4 é CSS-first: as cores viram utilitárias (bg-concrete, text-iron...)
- * e as fontes viram font-display / font-body / font-mono.
- * Nomes mantidos por compatibilidade; os papéis mudaram:
- *   concrete = papel · chalk = banda/superfície · graphite = tinta
- *   iron = azul-caneta (ação) · brass = vermelho-régua (hoje / queda)
- *   tatami = verde-positivo (Δ subiu) · rust = alerta · hairline = régua fina
+ * Design tokens — universo "carga de barra".
+ * Toda quantidade (peso, kcal, macro, peso corporal) é uma barra carregada de
+ * anilha. Cinco cores de anilha de competição, piso de plataforma.
+ * Nomes mantidos por compatibilidade; os papéis:
+ *   concrete = piso · chalk = superfície · graphite = tinta
+ *   iron = azul-anilha 20 (ação) · brass = ouro-anilha 15 (hoje / destaque)
+ *   tatami = verde-anilha 10 (subiu / na meta) · rust = vermelho-anilha 25 (caiu / alerta)
+ *   steel = a barra / trilho vazio · hairline = fio
  */
 @theme {
-  --color-concrete: #f4f4ee; /* papel do formulário */
-  --color-chalk: #f8f8f2; /* banda / superfície */
-  --color-graphite: #22271f; /* tinta — texto principal */
-  --color-graphite-soft: #63695c; /* tinta fraca — texto secundário */
-  --color-iron: #1f4b8f; /* azul-caneta — ações */
-  --color-brass: #b8402f; /* vermelho-régua — hoje / Δ negativo */
-  --color-tatami: #2f6d3f; /* verde — Δ positivo / dentro da meta */
-  --color-rust: #a5352a; /* alerta — fora da meta */
-  --color-hairline: #b9c3b3; /* régua fina / bordas */
+  --color-concrete: #edebe6; /* piso da plataforma — fundo */
+  --color-chalk: #f6f4ef; /* superfície */
+  --color-graphite: #1e2024; /* tinta — texto principal */
+  --color-graphite-soft: #5c5f66; /* texto secundário */
+  --color-iron: #2b5ca8; /* azul-anilha 20 — ação */
+  --color-brass: #cf9526; /* ouro-anilha 15 — hoje / destaque */
+  --color-tatami: #3c7a4b; /* verde-anilha 10 — subiu / na meta */
+  --color-rust: #c0442f; /* vermelho-anilha 25 — caiu / alerta */
+  --color-steel: #83888f; /* a barra / trilho vazio */
+  --color-hairline: #d7d5ce; /* fios / divisórias */
 
-  --font-display: 'Work Sans', system-ui, sans-serif;
-  --font-body: 'Work Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Barlow', system-ui, sans-serif;
+  --font-mono: 'Barlow', system-ui, sans-serif;
 }
 
 /*
- * Temas — sobrescrevem só as CSS vars de cor; as utilitárias (bg-concrete...)
- * referenciam essas vars, então nenhum componente muda. `light` é o @theme acima.
- * penumbra = papel ao entardecer · escuro = papel sob luz de mesa.
+ * Temas — sobrescrevem só as CSS vars de cor. `light` é o @theme acima.
+ * penumbra = plataforma na penumbra · escuro = plataforma sob spot.
+ * As anilhas ficam um pouco mais vivas no escuro pra não sumir.
  */
 :root[data-theme='dim'] {
-  --color-concrete: #2b2e26;
-  --color-chalk: #34382f;
-  --color-graphite: #e7ebdf;
-  --color-graphite-soft: #9aa08f;
-  --color-iron: #7ba0da;
-  --color-brass: #cf7a5f;
-  --color-tatami: #79ab84;
-  --color-rust: #cf7a5f;
-  --color-hairline: #484f42;
+  --color-concrete: #26282c;
+  --color-chalk: #2f3237;
+  --color-graphite: #e9e7e1;
+  --color-graphite-soft: #9a9da4;
+  --color-iron: #4677c8;
+  --color-brass: #dca63a;
+  --color-tatami: #4f9760;
+  --color-rust: #cd5340;
+  --color-steel: #8f949b;
+  --color-hairline: #3c4046;
   color-scheme: dark;
 }
 
 :root[data-theme='dark'] {
-  --color-concrete: #12140f;
-  --color-chalk: #181c14;
-  --color-graphite: #e9ece3;
-  --color-graphite-soft: #8b9182;
-  --color-iron: #6f9fe0;
-  --color-brass: #d4735f;
-  --color-tatami: #6faa78;
-  --color-rust: #c96a5c;
-  --color-hairline: #2c3227;
+  --color-concrete: #17191d;
+  --color-chalk: #212429;
+  --color-graphite: #eceae4;
+  --color-graphite-soft: #9a9da4;
+  --color-iron: #4e82d8;
+  --color-brass: #e6b23e;
+  --color-tatami: #58a56b;
+  --color-rust: #d65840;
+  --color-steel: #9aa0a8;
+  --color-hairline: #2e3238;
   color-scheme: dark;
 }
 
@@ -71,6 +74,18 @@
     color: var(--color-graphite);
     font-family: var(--font-body);
   }
+}
+
+/*
+ * Bloco de anilha — a textura da barra carregada. Usa currentColor, então
+ * a cor vem de uma utilitária (text-tatami, text-iron...) no próprio elemento.
+ */
+.cg-plate {
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 15px,
+    color-mix(in srgb, currentColor, #000 16%) 15px 17px
+  );
 }
 
 /* Motion — entrada/saída de itens e troca de aba, sem lib. */
