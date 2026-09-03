@@ -19,9 +19,9 @@ beforeEach(() => {
 describe('TodayScreen', () => {
   it('mostra as seções do dia', () => {
     render(<TodayScreen />)
+    expect(screen.getByRole('heading', { name: /^semana$/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /^peso$/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /meta do dia/i })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /treino de hoje/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /^suplementos$/i })).toBeInTheDocument()
   })
 
@@ -44,6 +44,6 @@ describe('TodayScreen', () => {
 
     const stored: unknown = JSON.parse(localStorage.getItem('cg:weightLog') ?? '[]')
     expect(stored).toEqual([{ date: today, kg: 63.8 }])
-    expect(screen.getByText('63,8 kg')).toBeInTheDocument()
+    expect(screen.getByText('63,8')).toBeInTheDocument()
   })
 })

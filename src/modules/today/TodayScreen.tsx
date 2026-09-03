@@ -1,10 +1,10 @@
 import { trainingDayForDate, useConfig } from '@/entities/config'
-import { LedgerPage } from '@/shared/ui/Ledger'
+import { Page } from '@/shared/ui/Page'
 import { QuickWeight } from './ui/QuickWeight'
 import { SupplementChecklist } from './ui/SupplementChecklist'
 import { TodayTargets } from './ui/TodayTargets'
 import { WeeklyStrip } from './ui/WeeklyStrip'
-import { WorkoutLedger } from './ui/WorkoutLedger'
+import { WorkoutList } from './ui/WorkoutList'
 
 const WEEKDAYS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado']
 
@@ -21,19 +21,22 @@ export function TodayScreen() {
   const isTrainingDay = day !== undefined && day.exercises.length > 0
 
   return (
-    <LedgerPage>
-      <header className="flex flex-col gap-0.5">
-        <h1 className="font-display text-graphite text-2xl font-semibold">
-          {isTrainingDay ? day.name : 'Descanso'}
-        </h1>
-        <p className="text-graphite-soft font-mono text-xs">{formatDate(today)}</p>
-      </header>
+    <Page>
+      <p className="text-graphite-soft text-sm font-medium">
+        {formatDate(today)}
+        {isTrainingDay && (
+          <>
+            {' · '}
+            <span className="text-graphite font-semibold">{day.name}</span>
+          </>
+        )}
+      </p>
 
       <WeeklyStrip />
-      <WorkoutLedger />
+      <WorkoutList />
       <QuickWeight />
       <TodayTargets />
       <SupplementChecklist />
-    </LedgerPage>
+    </Page>
   )
 }

@@ -10,6 +10,6 @@ describe('App', () => {
 
   it('mostra a meta de calorias da semente', () => {
     render(<App />)
-    expect(screen.getByText(/3150 kcal/)).toBeInTheDocument()
+    expect(screen.getByText('3150')).toBeInTheDocument()
   })
 })

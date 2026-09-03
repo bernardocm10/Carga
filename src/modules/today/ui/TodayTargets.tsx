@@ -1,17 +1,35 @@
 import { useConfig } from '@/entities/config'
-import { LedgerSection } from '@/shared/ui/Ledger'
+import { LoadBar } from '@/shared/ui/LoadBar'
+import { Section } from '@/shared/ui/Page'
 
 export function TodayTargets() {
-  const config = useConfig()
+  const { targetCalories, macros } = useConfig()
+
+  const pKcal = macros.protein * 4
+  const cKcal = macros.carbs * 4
+  const fKcal = macros.fat * 9
+  const total = pKcal + cKcal + fKcal || 1
 
   return (
-    <LedgerSection label="Meta do dia">
-      <div className="flex items-baseline justify-between font-mono">
-        <span className="text-iron text-lg">{config.targetCalories} kcal</span>
-        <span className="text-graphite-soft text-[11px]">
-          {config.macros.protein}P · {config.macros.carbs}C · {config.macros.fat}G
-        </span>
+    <Section label="meta do dia">
+      <div className="flex flex-col gap-2">
+        <div className="flex items-baseline gap-2">
+          <span className="font-display text-graphite text-4xl leading-none font-black">
+            {targetCalories}
+          </span>
+          <span className="text-graphite-soft font-display text-base font-bold">kcal</span>
+        </div>
+        <LoadBar
+          segments={[
+            { color: 'tatami', pct: (pKcal / total) * 100 },
+            { color: 'iron', pct: (cKcal / total) * 100 },
+            { color: 'brass', pct: (fKcal / total) * 100 },
+          ]}
+        />
+        <p className="text-graphite-soft text-xs font-medium">
+          {macros.protein} p · {macros.carbs} c · {macros.fat} g
+        </p>
       </div>
-    </LedgerSection>
+    </Section>
   )
 }
