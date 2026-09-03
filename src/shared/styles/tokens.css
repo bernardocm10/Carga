@@ -1,9 +1,6 @@
 @import 'tailwindcss';
 
-/* Fontes — 3 papéis (ver app_arquitetura_v1.md §5) */
-@import '@fontsource/oswald/500.css';
-@import '@fontsource/oswald/600.css';
-@import '@fontsource/oswald/700.css';
+/* Fontes — 2 papéis (ver app_arquitetura_v1.md §5) */
 @import '@fontsource/work-sans/400.css';
 @import '@fontsource/work-sans/500.css';
 @import '@fontsource/work-sans/600.css';
@@ -11,22 +8,27 @@
 @import '@fontsource/ibm-plex-mono/500.css';
 
 /*
- * Design tokens — universo "diário de treino / logbook de academia".
+ * Design tokens — universo "livro-razão de treino".
+ * Papel de formulário contábil (greenbar), régua vermelha na margem, tinta.
  * Tailwind v4 é CSS-first: as cores viram utilitárias (bg-concrete, text-iron...)
  * e as fontes viram font-display / font-body / font-mono.
+ * Nomes mantidos por compatibilidade; os papéis mudaram:
+ *   concrete = papel · chalk = banda/superfície · graphite = tinta
+ *   iron = azul-caneta (ação) · brass = vermelho-régua (hoje / queda)
+ *   tatami = verde-positivo (Δ subiu) · rust = alerta · hairline = régua fina
  */
 @theme {
-  --color-concrete: #edeae1; /* fundo */
-  --color-chalk: #f7f5ef; /* superfície / cards */
-  --color-graphite: #26221d; /* texto principal */
-  --color-graphite-soft: #5c574c; /* texto secundário */
-  --color-iron: #28497d; /* primária — ações / destaques */
-  --color-brass: #c9963a; /* acento — marcador "hoje" */
-  --color-tatami: #4b7a5b; /* positivo — dentro da meta */
-  --color-rust: #ae3d30; /* alerta — fora da meta */
-  --color-hairline: #dad3c2; /* linhas / bordas */
+  --color-concrete: #f4f4ee; /* papel do formulário */
+  --color-chalk: #f8f8f2; /* banda / superfície */
+  --color-graphite: #22271f; /* tinta — texto principal */
+  --color-graphite-soft: #63695c; /* tinta fraca — texto secundário */
+  --color-iron: #1f4b8f; /* azul-caneta — ações */
+  --color-brass: #b8402f; /* vermelho-régua — hoje / Δ negativo */
+  --color-tatami: #2f6d3f; /* verde — Δ positivo / dentro da meta */
+  --color-rust: #a5352a; /* alerta — fora da meta */
+  --color-hairline: #b9c3b3; /* régua fina / bordas */
 
-  --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-display: 'Work Sans', system-ui, sans-serif;
   --font-body: 'Work Sans', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
@@ -34,31 +36,31 @@
 /*
  * Temas — sobrescrevem só as CSS vars de cor; as utilitárias (bg-concrete...)
  * referenciam essas vars, então nenhum componente muda. `light` é o @theme acima.
- * Paleta quente do "logbook" mantida: penumbra = taupe escuro, escuro = quase-preto.
+ * penumbra = papel ao entardecer · escuro = papel sob luz de mesa.
  */
 :root[data-theme='dim'] {
-  --color-concrete: #33302a;
-  --color-chalk: #3d3931;
-  --color-graphite: #e9e4d8;
-  --color-graphite-soft: #a49c8b;
-  --color-iron: #6f97d6;
-  --color-brass: #d3a44e;
-  --color-tatami: #6fa886;
-  --color-rust: #cf6f61;
-  --color-hairline: #4c463c;
+  --color-concrete: #2b2e26;
+  --color-chalk: #34382f;
+  --color-graphite: #e7ebdf;
+  --color-graphite-soft: #9aa08f;
+  --color-iron: #7ba0da;
+  --color-brass: #cf7a5f;
+  --color-tatami: #79ab84;
+  --color-rust: #cf7a5f;
+  --color-hairline: #484f42;
   color-scheme: dark;
 }
 
 :root[data-theme='dark'] {
-  --color-concrete: #15130f;
-  --color-chalk: #201d18;
-  --color-graphite: #edeae1;
-  --color-graphite-soft: #948c7c;
-  --color-iron: #7ea2df;
-  --color-brass: #dcae54;
-  --color-tatami: #77b28a;
-  --color-rust: #d97365;
-  --color-hairline: #332e27;
+  --color-concrete: #12140f;
+  --color-chalk: #181c14;
+  --color-graphite: #e9ece3;
+  --color-graphite-soft: #8b9182;
+  --color-iron: #6f9fe0;
+  --color-brass: #d4735f;
+  --color-tatami: #6faa78;
+  --color-rust: #c96a5c;
+  --color-hairline: #2c3227;
   color-scheme: dark;
 }
 
