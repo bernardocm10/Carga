@@ -7,16 +7,14 @@ export function WeightChart() {
 
   if (entries.length < 2) {
     return (
-      <p className="border-hairline bg-chalk font-body text-graphite-soft rounded border p-4 text-sm">
-        Registre ao menos 2 dias pra ver a evolução.
-      </p>
+      <p className="text-graphite-soft text-sm">Registre ao menos 2 dias pra ver a evolução.</p>
     )
   }
 
   const data = movingAverage(entries)
 
   return (
-    <div className="border-hairline bg-chalk h-56 rounded border p-2">
+    <div className="border-hairline h-56 border">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -12 }}>
           <XAxis
@@ -34,7 +32,7 @@ export function WeightChart() {
           <Line
             type="monotone"
             dataKey="kg"
-            stroke="var(--color-hairline)"
+            stroke="var(--color-steel)"
             strokeWidth={1}
             dot={{ r: 2 }}
             isAnimationActive={false}

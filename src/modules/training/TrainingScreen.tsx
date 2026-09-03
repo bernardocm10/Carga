@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { trainingDayForWeekday, useConfig } from '@/entities/config'
 import { toISODate } from '@/shared/date/week'
+import { Page } from '@/shared/ui/Page'
 import { DaySelector } from './ui/DaySelector'
 import { EmptyDay } from './ui/EmptyDay'
 import { ExerciseCard } from './ui/ExerciseCard'
@@ -13,8 +14,10 @@ export function TrainingScreen() {
   const day = trainingDayForWeekday(config, weekday)
 
   return (
-    <section className="flex flex-col gap-4 p-4">
-      <h1 className="font-display text-graphite text-3xl tracking-wide uppercase">Treino</h1>
+    <Page>
+      <h1 className="font-display text-graphite text-4xl leading-none font-black uppercase">
+        Treino
+      </h1>
 
       <DaySelector
         split={config.trainingSplit}
@@ -26,11 +29,11 @@ export function TrainingScreen() {
       />
 
       {day && day.exercises.length > 0 ? (
-        <>
-          <p className="font-display text-graphite-soft text-sm tracking-wide uppercase">
-            {day.name} · {day.focus}
+        <div className="flex flex-col gap-4">
+          <p className="text-graphite-soft text-sm font-medium">
+            <span className="text-graphite font-semibold">{day.name}</span> · {day.focus}
           </p>
-          <div className="flex flex-col gap-3">
+          <ul className="border-hairline flex flex-col border-t">
             {day.exercises.map((exercise) => (
               <ExerciseCard
                 key={exercise.name}
@@ -39,11 +42,11 @@ export function TrainingScreen() {
                 date={date}
               />
             ))}
-          </div>
-        </>
+          </ul>
+        </div>
       ) : (
         <EmptyDay />
       )}
-    </section>
+    </Page>
   )
 }

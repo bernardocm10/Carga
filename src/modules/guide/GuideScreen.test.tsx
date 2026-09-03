@@ -13,15 +13,15 @@ describe('GuideScreen', () => {
     render(<GuideScreen />)
 
     expect(screen.getByRole('heading', { name: 'Guia' })).toBeInTheDocument()
-    expect(screen.getByText(/3150 kcal/)).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Cardápio' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Micronutrientes' })).toBeInTheDocument()
+    expect(screen.getByText('3150')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /cardápio/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /micronutrientes/i })).toBeInTheDocument()
   })
 
   it('lista uma refeição, uma regra de troca e uma nota de micronutriente do seed', () => {
     render(<GuideScreen />)
 
-    expect(screen.getByRole('heading', { name: 'Café da manhã' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /café da manhã/i })).toBeInTheDocument()
     expect(screen.getByText(/bata a proteína/i)).toBeInTheDocument()
     expect(screen.getByText('Fibra')).toBeInTheDocument()
     expect(screen.getByText(/citrulina malato/i)).toBeInTheDocument()
@@ -36,7 +36,7 @@ describe('GuideScreen', () => {
 
     render(<GuideScreen />)
 
-    expect(screen.getByRole('heading', { name: 'Cardápio' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'Café da manhã' })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /cardápio/i })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /café da manhã/i })).not.toBeInTheDocument()
   })
 })

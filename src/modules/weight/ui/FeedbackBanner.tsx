@@ -4,10 +4,10 @@ import { useWeightLog } from '@/entities/weight-log'
 import { evaluateWeightProtocol, type Verdict } from '../domain/weightProtocol'
 
 const TONE: Record<Verdict['kind'], string> = {
-  'insufficient-data': 'border-hairline text-graphite-soft',
-  'on-track': 'border-tatami text-tatami',
-  'too-fast': 'border-rust text-rust',
-  'below-target': 'border-brass text-brass',
+  'insufficient-data': 'border-steel text-graphite-soft',
+  'on-track': 'border-tatami text-graphite',
+  'too-fast': 'border-rust text-graphite',
+  'below-target': 'border-brass text-graphite',
 }
 
 export function FeedbackBanner() {
@@ -16,7 +16,7 @@ export function FeedbackBanner() {
   const verdict = evaluateWeightProtocol(entries, config)
 
   return (
-    <div className={cn('bg-chalk font-body rounded border-l-4 p-4 text-sm', TONE[verdict.kind])}>
+    <div className={cn('border-l-4 py-1 pl-3 text-sm', TONE[verdict.kind])}>
       {messageFor(verdict)}
     </div>
   )
