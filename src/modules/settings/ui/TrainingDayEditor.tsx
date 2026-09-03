@@ -17,20 +17,16 @@ export function TrainingDayEditor({ day, open, onToggle }: Props) {
   const apply = (next: Config) => updateConfig(next)
 
   return (
-    <div className="border-hairline bg-chalk overflow-hidden rounded border">
+    <div className="border-hairline border-b">
       <button
         type="button"
         aria-expanded={open}
         onClick={onToggle}
-        className="active:bg-concrete flex w-full items-center gap-2 p-4 text-left transition-colors"
+        className="flex w-full items-baseline gap-2 py-2.5 text-left"
       >
-        <span className="flex-1">
-          <span className="font-display text-graphite text-lg tracking-wide uppercase">
-            {day.name}
-          </span>
-          <span className="font-body text-graphite-soft ml-2 text-sm">{day.focus}</span>
-        </span>
-        <span className="font-body text-graphite-soft shrink-0 text-xs tabular-nums">
+        <span className="text-graphite flex-1 text-sm font-semibold">{day.name}</span>
+        <span className="text-graphite-soft text-[11px]">{day.focus}</span>
+        <span className="font-display text-graphite text-base font-bold tabular-nums">
           {day.exercises.length}
         </span>
         <span
@@ -42,11 +38,11 @@ export function TrainingDayEditor({ day, open, onToggle }: Props) {
       </button>
 
       {open && (
-        <div className="flex flex-col gap-1 px-4 pb-4">
+        <div className="flex flex-col gap-1 pt-1 pb-4">
           {day.exercises.length === 0 ? (
-            <p className="font-body text-graphite-soft text-xs">Nenhum exercício ainda.</p>
+            <p className="text-graphite-soft text-xs">Nenhum exercício ainda.</p>
           ) : (
-            <div className="font-display text-graphite-soft grid grid-cols-[1fr_2.5rem_4rem_4.5rem] items-center gap-2 px-1 text-[0.65rem] tracking-wide uppercase">
+            <div className="text-graphite-soft grid grid-cols-[1fr_2.5rem_4rem_4.5rem] items-center gap-2 px-1 text-[0.65rem] font-semibold tracking-wide uppercase">
               <span>Exercício</span>
               <span className="text-center">Sér</span>
               <span className="text-center">Reps</span>
