@@ -2,6 +2,7 @@ import { useConfig } from '@/entities/config'
 import { useSupplementLogStore, useTakenOn } from '@/entities/supplement-log'
 import { cn } from '@/shared/lib/cn'
 import { toISODate } from '@/shared/date/week'
+import { LedgerSection } from '@/shared/ui/Ledger'
 
 export function SupplementChecklist() {
   const config = useConfig()
@@ -10,35 +11,31 @@ export function SupplementChecklist() {
   const toggle = useSupplementLogStore((state) => state.toggle)
 
   return (
-    <section className="border-iron bg-chalk flex flex-col gap-2 rounded border border-l-2 p-4">
-      <h2 className="font-display text-graphite-soft text-sm tracking-wide uppercase">
-        Suplementos de hoje
-      </h2>
-
-      <ul className="flex flex-col gap-1">
+    <LedgerSection label="Suplementos">
+      <ul className="flex flex-col">
         {config.supplements.map((supplement) => {
           const done = taken.includes(supplement.name)
           return (
-            <li key={supplement.name}>
+            <li key={supplement.name} className="odd:bg-tatami/[0.07]">
               <button
                 type="button"
                 aria-pressed={done}
                 onClick={() => toggle(today, supplement.name)}
-                className="font-body text-graphite flex w-full items-center gap-2 py-1 text-left text-sm active:scale-[0.99]"
+                className="text-graphite flex w-full items-center gap-2.5 py-1.5 text-left text-sm active:scale-[0.99]"
               >
                 <span
                   className={cn(
-                    'flex size-5 shrink-0 items-center justify-center rounded border transition-colors',
-                    done ? 'border-iron bg-iron text-chalk' : 'border-graphite-soft',
+                    'flex size-4 shrink-0 items-center justify-center border text-[10px] transition-colors',
+                    done ? 'border-iron bg-iron text-concrete' : 'border-graphite-soft',
                   )}
                   aria-hidden
                 >
                   {done ? '✓' : ''}
                 </span>
-                <span className={cn(done && 'text-graphite-soft line-through')}>
+                <span className={cn('min-w-0 truncate', done && 'text-graphite-soft line-through')}>
                   {supplement.name}
                 </span>
-                <span className="text-graphite-soft ml-auto font-mono text-xs">
+                <span className="text-graphite-soft ml-auto shrink-0 pl-3 text-right font-mono text-[10px]">
                   {supplement.timing}
                 </span>
               </button>
@@ -46,6 +43,6 @@ export function SupplementChecklist() {
           )
         })}
       </ul>
-    </section>
+    </LedgerSection>
   )
 }

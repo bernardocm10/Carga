@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useWeightLog, useWeightLogStore } from '@/entities/weight-log'
 import { toISODate } from '@/shared/date/week'
 import { Button } from '@/shared/ui/Button'
+import { LedgerSection } from '@/shared/ui/Ledger'
 import { NumberField } from '@/shared/ui/NumberField'
 
 export function QuickWeight() {
@@ -23,29 +24,26 @@ export function QuickWeight() {
   }
 
   return (
-    <section className="border-iron bg-chalk flex flex-col gap-2 rounded border border-l-2 p-4">
-      <h2 className="font-display text-graphite-soft text-sm tracking-wide uppercase">
-        Peso de hoje
-      </h2>
-
+    <LedgerSection label="Peso">
       {loggedToday && !editing ? (
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="font-display text-graphite text-2xl">
+        <div className="flex items-baseline justify-between font-mono">
+          <span className="text-graphite-soft text-[11px]">registrado hoje</span>
+          <span className="text-graphite text-base">
             {String(loggedToday.kg).replace('.', ',')} kg
+            <button
+              type="button"
+              onClick={() => {
+                setKg(String(loggedToday.kg).replace('.', ','))
+                setEditing(true)
+              }}
+              className="text-iron ml-3 text-xs underline"
+            >
+              corrigir
+            </button>
           </span>
-          <button
-            type="button"
-            onClick={() => {
-              setKg(String(loggedToday.kg).replace('.', ','))
-              setEditing(true)
-            }}
-            className="font-body text-graphite-soft hover:text-graphite text-sm underline"
-          >
-            corrigir
-          </button>
         </div>
       ) : (
-        <form onSubmit={submit} className="flex items-end gap-2">
+        <form onSubmit={submit} className="flex items-end gap-3">
           <NumberField
             label="kg"
             value={kg}
@@ -56,6 +54,6 @@ export function QuickWeight() {
           <Button type="submit">Salvar</Button>
         </form>
       )}
-    </section>
+    </LedgerSection>
   )
 }

@@ -5,7 +5,7 @@ import { cn } from '@/shared/lib/cn'
 import { useLeave } from '@/shared/lib/useLeave'
 import { Button } from '@/shared/ui/Button'
 import { NumberField } from '@/shared/ui/NumberField'
-import { lastLoadForExercise } from '../domain/lastLoad'
+import { lastLoadForExercise } from '@/entities/training-log'
 
 function dayMonth(iso: string): string {
   return `${iso.slice(8, 10)}/${iso.slice(5, 7)}`
