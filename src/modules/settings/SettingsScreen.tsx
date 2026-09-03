@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useConfig } from '@/entities/config'
+import { Page, Section } from '@/shared/ui/Page'
 import { AppearanceSection } from './ui/AppearanceSection'
 import { MacrosSection } from './ui/MacrosSection'
+import { MealsSection } from './ui/MealsSection'
+import { MicroNotesSection } from './ui/MicroNotesSection'
 import { TrainingDayEditor } from './ui/TrainingDayEditor'
 
 export function SettingsScreen() {
@@ -13,23 +16,31 @@ export function SettingsScreen() {
   const [openDay, setOpenDay] = useState<number | null>(null)
 
   return (
-    <section className="flex flex-col gap-4 p-4">
-      <h1 className="font-display text-graphite text-3xl tracking-wide uppercase">Ajustes</h1>
+    <Page>
+      <h1 className="font-display text-graphite text-4xl leading-none font-black uppercase">
+        Ajustes
+      </h1>
 
       <MacrosSection />
+      <MealsSection />
+      <MicroNotesSection />
 
-      <div className="flex flex-col gap-2">
-        {days.map((day) => (
-          <TrainingDayEditor
-            key={day.weekday}
-            day={day}
-            open={openDay === day.weekday}
-            onToggle={() => setOpenDay((current) => (current === day.weekday ? null : day.weekday))}
-          />
-        ))}
-      </div>
+      <Section label="treino">
+        <div className="border-hairline flex flex-col border-t">
+          {days.map((day) => (
+            <TrainingDayEditor
+              key={day.weekday}
+              day={day}
+              open={openDay === day.weekday}
+              onToggle={() =>
+                setOpenDay((current) => (current === day.weekday ? null : day.weekday))
+              }
+            />
+          ))}
+        </div>
+      </Section>
 
       <AppearanceSection />
-    </section>
+    </Page>
   )
 }

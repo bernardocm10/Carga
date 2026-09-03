@@ -1,14 +1,14 @@
 import { THEMES, useTheme, useThemeStore } from '@/shared/theme'
 import { cn } from '@/shared/lib/cn'
+import { Section } from '@/shared/ui/Page'
 
 export function AppearanceSection() {
   const theme = useTheme()
   const setTheme = useThemeStore((state) => state.setTheme)
 
   return (
-    <div className="border-hairline bg-chalk flex flex-col gap-3 rounded border p-4">
-      <h2 className="font-display text-graphite text-lg tracking-wide uppercase">Aparência</h2>
-      <div className="flex gap-1">
+    <Section label="aparência">
+      <div className="flex gap-1.5">
         {THEMES.map(({ id, label }) => {
           const isActive = id === theme
           return (
@@ -18,11 +18,11 @@ export function AppearanceSection() {
               aria-pressed={isActive}
               onClick={() => setTheme(id)}
               className={cn(
-                'font-display flex-1 rounded border py-2 text-xs tracking-wide uppercase',
+                'font-display flex-1 border-2 py-2 text-xs font-bold tracking-wide uppercase',
                 'transition-colors duration-150 active:scale-[0.97]',
                 isActive
-                  ? 'border-iron bg-iron text-chalk'
-                  : 'border-hairline bg-chalk text-graphite-soft hover:text-graphite',
+                  ? 'border-iron bg-iron text-white'
+                  : 'border-hairline text-graphite-soft hover:text-graphite',
               )}
             >
               {label}
@@ -30,6 +30,6 @@ export function AppearanceSection() {
           )
         })}
       </div>
-    </div>
+    </Section>
   )
 }
