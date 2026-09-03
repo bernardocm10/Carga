@@ -18,7 +18,7 @@ function SetChip({ label, index, onRemove }: SetChipProps) {
   return (
     <li
       className={cn(
-        'border-hairline text-graphite flex items-center gap-2 rounded border px-2 py-1 font-mono text-sm',
+        'border-hairline text-graphite flex items-center gap-2 border px-2 py-1 text-sm',
         leaving ? 'cg-leave' : 'cg-enter',
       )}
     >
@@ -66,17 +66,15 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
   }
 
   return (
-    <div className="border-hairline bg-chalk flex flex-col gap-3 rounded border p-4">
+    <li className="border-hairline flex flex-col gap-3 border-b py-4">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-display text-graphite text-lg tracking-wide uppercase">
-          {exercise.name}
-        </span>
-        <span className="text-graphite-soft font-mono text-sm">
+        <span className="text-graphite text-sm font-semibold">{exercise.name}</span>
+        <span className="text-graphite-soft shrink-0 text-xs">
           {exercise.sets}×{exercise.reps}
         </span>
       </div>
 
-      <p className="font-body text-graphite-soft text-xs">
+      <p className="text-graphite-soft text-xs">
         {last
           ? `última vez ${dayMonth(last.date)} · ${last.topSet.weight}kg × ${last.topSet.reps}`
           : 'primeira vez'}
@@ -114,6 +112,6 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
           +
         </Button>
       </form>
-    </div>
+    </li>
   )
 }

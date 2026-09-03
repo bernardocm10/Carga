@@ -1,7 +1,7 @@
 export function EmptyDay() {
   return (
-    <div className="border-hairline bg-chalk text-graphite-soft font-body rounded border p-4 text-sm">
+    <p className="text-graphite-soft text-sm">
       Nenhum exercício neste dia. Configure na aba Ajustes.
-    </div>
+    </p>
   )
 }

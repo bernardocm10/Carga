@@ -20,30 +20,32 @@ export function WeightForm() {
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="border-hairline bg-chalk flex flex-col gap-3 rounded border p-4"
-    >
-      <NumberField
-        label="Peso (kg)"
-        value={kg}
-        onChange={(event) => setKg(event.target.value)}
-        placeholder="0.0"
-      />
-      <label htmlFor="weight-date" className="flex flex-col gap-1">
-        <span className="font-display text-graphite-soft text-xs tracking-wide uppercase">
-          Data
-        </span>
-        <input
-          id="weight-date"
-          type="date"
-          value={date}
-          max={today}
-          onChange={(event) => setDate(event.target.value)}
-          className="border-hairline bg-chalk text-graphite focus:border-iron rounded border px-3 py-2 font-mono focus:outline-none"
+    <form onSubmit={submit} className="flex flex-col gap-3">
+      <div className="flex items-end gap-2">
+        <NumberField
+          label="Peso (kg)"
+          value={kg}
+          onChange={(event) => setKg(event.target.value)}
+          placeholder="0,0"
+          className="flex-1"
         />
-      </label>
-      <Button type="submit">Salvar</Button>
+        <label htmlFor="weight-date" className="flex flex-1 flex-col gap-1">
+          <span className="font-display text-graphite-soft text-xs tracking-wide uppercase">
+            Data
+          </span>
+          <input
+            id="weight-date"
+            type="date"
+            value={date}
+            max={today}
+            onChange={(event) => setDate(event.target.value)}
+            className="border-hairline bg-chalk text-graphite focus:border-iron border px-3 py-2 text-sm focus:outline-none"
+          />
+        </label>
+      </div>
+      <Button type="submit" className="self-start">
+        Salvar
+      </Button>
     </form>
   )
 }

@@ -1,44 +1,53 @@
-import type { ReactNode } from 'react'
 import { useConfig } from '@/entities/config'
+import { LoadBar } from '@/shared/ui/LoadBar'
+import { Page, Section } from '@/shared/ui/Page'
 import { MealCard } from './ui/MealCard'
 import { SWAP_RULES } from './guide.content'
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="flex flex-col gap-3">
-      <h2 className="font-display text-graphite-soft text-sm tracking-wide uppercase">{title}</h2>
-      {children}
-    </section>
-  )
-}
 
 export function GuideScreen() {
   const config = useConfig()
   const meals = config.meals ?? []
   const micronotes = config.micronotes ?? []
+  const { protein, carbs, fat } = config.macros
+  const total = protein * 4 + carbs * 4 + fat * 9 || 1
 
   return (
-    <div className="flex flex-col gap-6 p-4">
-      <h1 className="font-display text-graphite text-3xl tracking-wide uppercase">Guia</h1>
+    <Page>
+      <h1 className="font-display text-graphite text-4xl leading-none font-black uppercase">
+        Guia
+      </h1>
 
-      <Section title="Metas do dia">
-        <div className="border-hairline bg-chalk flex flex-col gap-1 rounded border p-4">
-          <p className="font-display text-graphite text-3xl">{config.targetCalories} kcal</p>
-          <p className="text-graphite-soft font-mono text-sm">
-            Proteína {config.macros.protein}g · Carbo {config.macros.carbs}g · Gordura{' '}
-            {config.macros.fat}g
+      <Section label="metas do dia">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-baseline gap-2">
+            <span className="font-display text-graphite text-4xl leading-none font-black">
+              {config.targetCalories}
+            </span>
+            <span className="text-graphite-soft font-display text-base font-bold">kcal</span>
+          </div>
+          <LoadBar
+            segments={[
+              { color: 'tatami', pct: ((protein * 4) / total) * 100 },
+              { color: 'iron', pct: ((carbs * 4) / total) * 100 },
+              { color: 'brass', pct: ((fat * 9) / total) * 100 },
+            ]}
+          />
+          <p className="text-graphite-soft text-xs">
+            {protein} g proteína · {carbs} g carbo · {fat} g gordura
           </p>
         </div>
       </Section>
 
-      <Section title="Cardápio">
-        {meals.map((meal) => (
-          <MealCard key={meal.name} meal={meal} />
-        ))}
+      <Section label="cardápio">
+        <div className="flex flex-col gap-3">
+          {meals.map((meal) => (
+            <MealCard key={meal.name} meal={meal} />
+          ))}
+        </div>
       </Section>
 
-      <Section title="Regra de troca">
-        <ul className="border-hairline bg-chalk font-body text-graphite flex flex-col gap-2 rounded border p-4 text-sm">
+      <Section label="regra de troca">
+        <ul className="text-graphite flex flex-col gap-2 text-sm">
           {SWAP_RULES.map((rule) => (
             <li key={rule} className="flex gap-2">
               <span className="text-graphite-soft" aria-hidden>
@@ -50,13 +59,11 @@ export function GuideScreen() {
         </ul>
       </Section>
 
-      <Section title="Suplementos">
-        <ul className="border-hairline bg-chalk flex flex-col gap-3 rounded border p-4">
+      <Section label="suplementos">
+        <ul className="flex flex-col gap-3">
           {config.supplements.map((supplement) => (
-            <li key={supplement.name} className="font-body flex flex-col gap-0.5 text-sm">
-              <span className="font-display text-graphite tracking-wide uppercase">
-                {supplement.name}
-              </span>
+            <li key={supplement.name} className="flex flex-col gap-0.5 text-sm">
+              <span className="text-graphite font-semibold">{supplement.name}</span>
               <span className="text-graphite">{supplement.dose}</span>
               <span className="text-graphite-soft text-xs">{supplement.timing}</span>
             </li>
@@ -64,18 +71,16 @@ export function GuideScreen() {
         </ul>
       </Section>
 
-      <Section title="Micronutrientes">
-        <ul className="border-hairline bg-chalk flex flex-col gap-3 rounded border p-4">
+      <Section label="micronutrientes">
+        <ul className="flex flex-col gap-2 text-sm">
           {micronotes.map((note) => (
-            <li key={note.topic} className="font-body text-sm">
-              <span className="font-display text-graphite tracking-wide uppercase">
-                {note.topic}
-              </span>
+            <li key={note.topic}>
+              <span className="text-graphite font-semibold">{note.topic}</span>
               <span className="text-graphite-soft"> — {note.detail}</span>
             </li>
           ))}
         </ul>
       </Section>
-    </div>
+    </Page>
   )
 }
