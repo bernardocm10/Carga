@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { TrainingSession } from '@/entities/training-log'
-import { lastLoadForExercise } from './lastLoad'
+import { lastLoadForExercise } from './training-log.selectors'
 
 function session(date: string, sets: Array<[number, number]>): TrainingSession {
   return {

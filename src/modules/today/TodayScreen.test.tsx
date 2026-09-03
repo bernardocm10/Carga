@@ -19,10 +19,10 @@ beforeEach(() => {
 describe('TodayScreen', () => {
   it('mostra as seções do dia', () => {
     render(<TodayScreen />)
-    expect(screen.getByRole('heading', { name: /peso de hoje/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /^peso$/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /meta do dia/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /treino de hoje/i })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /suplementos de hoje/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /^suplementos$/i })).toBeInTheDocument()
   })
 
   it('marca um suplemento e persiste na data de hoje', async () => {

@@ -1,4 +1,4 @@
-import type { LoggedSet, TrainingSession } from '@/entities/training-log'
+import type { LoggedSet, TrainingSession } from './training-log.types'
 
 export type LastLoad = {
   date: string
