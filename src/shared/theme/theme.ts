@@ -1,4 +1,5 @@
 import { kvGet, kvSet } from '@/shared/storage'
+import { syncNativeChrome } from './nativeChrome'
 
 export type Theme = 'light' | 'dim' | 'dark'
 
@@ -25,4 +26,5 @@ export function applyTheme(theme: Theme): void {
   const root = document.documentElement
   if (theme === 'light') delete root.dataset.theme
   else root.dataset.theme = theme
+  syncNativeChrome(theme)
 }
