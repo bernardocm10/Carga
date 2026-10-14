@@ -1,6 +1,6 @@
 # Treino v2 — banco local, catálogo de exercícios e treino personalizado
 
-Data: 2026-10-16 · Status: aguardando revisão
+Data: 2026-10-16 · Status: aprovado
 
 ## 1. Objetivo
 
@@ -17,6 +17,7 @@ Três mudanças encadeadas, entregues em 3 PRs independentes:
 - App continua **offline, sem conta, sem nuvem**. Rede só em tempo de desenvolvimento (script de catálogo).
 - Estatísticas: **séries e volume (Σ séries × reps × kg)**, **previsto e feito sempre lado a lado**.
 - Na UI, **kg fica colado nas reps** (`3 × 8-12 · 40 kg`, `40 kg × 8`).
+- **Nenhuma imagem desenhada**: só fotos do acervo. Quando há mais de uma foto plausível, o exercício guarda todas como variantes e **arrastar a imagem para o lado troca de foto**.
 - Ao personalizar: escolher entre **partir do treino do dia** ou **começar do zero**.
 - Adicionar exercício escolhe da **ficha + catálogo inteiro**; nomes de **exercícios em inglês** (os do acervo). Nomes dos **dias** continuam em português.
 
@@ -92,6 +93,9 @@ Aba **Ajustes** ganha seção "Backup": **Exportar** (download do `.json` via `<
 ### 3.1 Entidade `entities/exercise-catalog`
 
 ```ts
+/** um conjunto de fotos de um exercício do acervo: [início, fim] */
+type ImageVariant = { sourceId: string; images: string[] }
+
 type CatalogExercise = {
   /** id do free-exercise-db (ex. "Hammer_Curls") ou "cg:<slug>" para os próprios */
   id: string
@@ -99,17 +103,17 @@ type CatalogExercise = {
   name: string
   primaryMuscles: string[]
   equipment: string | null
-  /** caminhos relativos a /exercises/ — [início, fim]; vazio = sem foto */
-  images: string[]
+  /** ≥ 1 variante; a primeira é a padrão. Vazio só para `legacy:` */
+  variants: ImageVariant[]
 }
 ```
 
-- `data/catalog.json`: gerado pelo script (3.2), só os campos acima (~200 KB).
-- `data/custom.ts`: exercícios próprios com prefixo `cg:` (ver 3.5).
-- API pública (`index.ts`): tipos, `exerciseById(id): CatalogExercise | undefined`, `exerciseName(id): string`, `searchExercises(query, priorityIds): CatalogExercise[]`, `imageUrl(path): string`.
+- `data/catalog.json`: gerado pelo script (3.2), só os campos acima (~200 KB). Exercício do acervo tem uma variante: as próprias fotos.
+- `data/custom.ts`: exercícios próprios com prefixo `cg:` (ver 3.5). **Não têm foto própria**: as variantes apontam para fotos de exercícios do acervo. Nada é desenhado.
+- API pública (`index.ts`): tipos, `exerciseById(id): CatalogExercise | undefined`, `exerciseName(id): string`, `searchExercises(query, priorityIds): CatalogExercise[]`, `imageUrl(path): string`, e o store `useImageChoice` (3.6).
 - `searchExercises` (TDD): busca sem acento e sem caixa por substring no nome; ids em `priorityIds` (os da ficha) primeiro; limite de 50 resultados.
 - `exerciseName` para id `legacy:<nome>` devolve `<nome>`; para id desconhecido devolve o próprio id.
-- Catálogo é **somente leitura e vive no código**. Exercício novo fora do acervo = ajuste estrutural (pedir ao desenvolvimento).
+- Catálogo é **somente leitura e vive no código**. Exercício novo fora do acervo = ajuste estrutural (pedir ao desenvolvimento), sempre reaproveitando fotos do acervo.
 
 ### 3.2 Fotos
 
@@ -131,6 +135,8 @@ type Exercise = { exerciseId: string; sets: number; reps: string }
 type LoggedExercise = { exerciseId: string; sets: LoggedSet[] }
 ```
 
+Tabela nova `imageChoice` (chave `exerciseId`): `{ exerciseId, variantIndex }` — qual variante de foto o usuário deixou selecionada.
+
 `lastLoadForExercise` e `todayWorkout` passam a comparar por `exerciseId`. A UI resolve o nome via `exerciseName`.
 
 ### 3.4 Migração nome → id
@@ -143,20 +149,17 @@ type LoggedExercise = { exerciseId: string; sets: LoggedSet[] }
 
 ### 3.5 Mapa da ficha atual
 
-⚠ = escolha ambígua, conferir.
+Regra: quando um exercício da ficha corresponde a **um** exercício do acervo, usa o id do acervo. Quando corresponde a **vários** (variações que o usuário alterna, ou equipamento indiferente) ou a **nenhum** exato, vira uma entrada `cg:` com nome próprio em inglês e as fotos do acervo como variantes (troca arrastando para o lado).
+
+**Um para um (acervo):**
 
 | Nome atual (pt)                | id                                      | Nome exibido (en)                     |
 | ------------------------------ | --------------------------------------- | ------------------------------------- |
 | Abdominal Infra                | `Reverse_Crunch`                        | Reverse Crunch                        |
 | Abdominal Supra                | `Crunches`                              | Crunches                              |
-| Agachamento búlgaro ⚠          | `Split_Squat_with_Dumbbells`            | Split Squat with Dumbbells            |
 | Agachamento hack               | `Hack_Squat`                            | Hack Squat                            |
-| Barra fixa / puxada alta ⚠     | `Pullups`                               | Pullups                               |
 | Cadeira extensora              | `Leg_Extensions`                        | Leg Extensions                        |
-| Crucifixo inverso ⚠            | `Reverse_Machine_Flyes`                 | Reverse Machine Flyes                 |
 | Elevação de pernas na barra    | `Hanging_Leg_Raise`                     | Hanging Leg Raise                     |
-| Elevação lateral na máquina    | `cg:machine-lateral-raise`              | Machine Lateral Raise                 |
-| Elevação lateral na polia ⚠    | `Cable_Seated_Lateral_Raise`            | Cable Seated Lateral Raise            |
 | Elevação pélvica               | `Barbell_Hip_Thrust`                    | Barbell Hip Thrust                    |
 | Leg press                      | `Leg_Press`                             | Leg Press                             |
 | Mesa flexora                   | `Lying_Leg_Curls`                       | Lying Leg Curls                       |
@@ -165,33 +168,40 @@ type LoggedExercise = { exerciseId: string; sets: LoggedSet[] }
 | Panturrilha sentado            | `Seated_Calf_Raise`                     | Seated Calf Raise                     |
 | Puxada unilateral na polia     | `One_Arm_Lat_Pulldown`                  | One Arm Lat Pulldown                  |
 | Remada baixa ao quadril        | `Seated_Cable_Rows`                     | Seated Cable Rows                     |
-| Remada com apoio no peito ⚠    | `Dumbbell_Incline_Row`                  | Dumbbell Incline Row                  |
 | Rosca inclinada com halteres   | `Incline_Dumbbell_Curl`                 | Incline Dumbbell Curl                 |
 | Rosca martelo                  | `Hammer_Curls`                          | Hammer Curls                          |
 | Rosca scott                    | `Preacher_Curl`                         | Preacher Curl                         |
-| Serrátil na polia              | `cg:cable-serratus-crunch`              | Cable Serratus Crunch                 |
 | Supino inclinado com halteres  | `Incline_Dumbbell_Press`                | Incline Dumbbell Press                |
 | Supino inclinado máquina/Smith | `Smith_Machine_Incline_Bench_Press`     | Smith Machine Incline Bench Press     |
 | Terra romeno                   | `Romanian_Deadlift`                     | Romanian Deadlift                     |
 | Tríceps corda                  | `Triceps_Pushdown_-_Rope_Attachment`    | Triceps Pushdown - Rope Attachment    |
 | Tríceps francês na polia       | `Cable_Rope_Overhead_Triceps_Extension` | Cable Rope Overhead Triceps Extension |
 
-Notas dos ⚠:
+**Entradas próprias (`cg:`) com variantes do acervo** (a primeira é a padrão):
 
-- **Agachamento búlgaro**: o acervo não tem a versão com pé de trás elevado com halteres; alternativa `One_Leg_Barbell_Squat` (barra, pé elevado).
-- **Barra fixa / puxada alta**: o nome cobre dois exercícios; alternativa `Wide-Grip_Lat_Pulldown`.
-- **Crucifixo inverso**: assumido na máquina (peck deck invertido); se for com halteres, `Reverse_Flyes`.
-- **Elevação lateral na polia**: o acervo só tem a versão sentada; alternativa virar `cg:` própria.
-- **Remada com apoio no peito**: assumido com halteres no banco inclinado; se for máquina, vira `cg:` própria.
+| Nome atual (pt)             | id                         | Nome exibido (en)      | Variantes de foto                                                                              |
+| --------------------------- | -------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------- |
+| Agachamento búlgaro         | `cg:bulgarian-split-squat` | Bulgarian Split Squat  | `Split_Squat_with_Dumbbells`, `One_Leg_Barbell_Squat`, `Smith_Single-Leg_Split_Squat`          |
+| Barra fixa / puxada alta    | `cg:pullup-lat-pulldown`   | Pull-up / Lat Pulldown | `Pullups`, `Wide-Grip_Lat_Pulldown`                                                            |
+| Crucifixo inverso           | `cg:reverse-fly`           | Reverse Fly            | `Reverse_Machine_Flyes`, `Reverse_Flyes`                                                       |
+| Elevação lateral na polia   | `cg:cable-lateral-raise`   | Cable Lateral Raise    | `Standing_Low-Pulley_Deltoid_Raise`, `Cable_Seated_Lateral_Raise`                              |
+| Remada com apoio no peito   | `cg:chest-supported-row`   | Chest-Supported Row    | `Dumbbell_Incline_Row`, `Lying_T-Bar_Row`                                                      |
+| Elevação lateral na máquina | `cg:machine-lateral-raise` | Machine Lateral Raise  | `Seated_Side_Lateral_Raise`, `Side_Lateral_Raise` _(aproximadas: acervo não tem a máquina)_    |
+| Serrátil na polia           | `cg:cable-serratus`        | Cable Serratus         | `Straight-Arm_Pulldown`, `Rope_Straight-Arm_Pulldown` _(aproximadas: acervo não tem serrátil)_ |
 
-Os 2 exercícios `cg:` recebem ilustração SVG própria em `public/exercises/cg-<slug>/0.svg` e `1.svg` (início/fim), no estilo do app.
+Nota: variantes são **só visuais**. Alternar entre máquina e halteres no mesmo exercício mantém um histórico de carga único; se um dia fizer sentido separar, vira dois exercícios (ajuste estrutural).
 
 ### 3.6 UI
 
 Entity não exporta componente (doc 03), então:
 
 - `shared/ui/SearchPicker` — sheet com campo de busca e lista; recebe `items`, `onQuery`, `renderItem`, `onPick`. Genérico, sem saber de exercício.
-- `shared/ui/ExerciseImage` — miniatura (`src` da foto de início); toque abre ampliada alternando início/fim a cada ~1 s; sem foto → ícone neutro (Lucide `Dumbbell`). Recebe `images: string[]`, `alt`.
+- `shared/ui/ExerciseImage` — recebe `variants: string[][]`, `selected`, `onSelect`, `alt`.
+  - Miniatura mostra a foto de início da variante selecionada; com mais de uma variante, mostra pontinhos indicadores.
+  - **Arrastar para o lado** (pointer events, limiar ~40 px, sem biblioteca) troca de variante, na miniatura e na vista ampliada.
+  - Toque abre ampliada alternando início/fim a cada ~1 s.
+  - Sem variantes (`legacy:`) → ícone neutro (Lucide `Dumbbell`).
+- `useImageChoice` (store em `exercise-catalog`, persistido na tabela `imageChoice`): lembra a variante escolhida por exercício; padrão 0.
 - **Treino**: `ExerciseCard` ganha a miniatura à esquerda do nome.
 - **Ajustes**: "adicionar exercício" em `TrainingDayEditor` deixa de ser texto livre e abre o `SearchPicker` ligado a `searchExercises`. Trocar exercício também usa o picker.
 
@@ -199,8 +209,11 @@ Entity não exporta componente (doc 03), então:
 
 - `searchExercises`: acento/caixa, prioridade da ficha, limite.
 - `exerciseName`: catálogo, `cg:`, `legacy:`, desconhecido.
+- `custom.ts`: toda variante aponta para um id existente no `catalog.json` (teste de integridade).
 - `migrateV1toV2`: ficha e histórico convertidos; nome sem mapa vira `legacy:`; idempotência (rodar sobre dado já v2 não muda nada).
 - `upgrade` Dexie v1 → v2 com dados reais de exemplo.
+- `useImageChoice`: padrão 0, persiste e reidrata.
+- `ExerciseImage`: arrasto além do limiar troca variante e chama `onSelect`; arrasto curto não troca; uma variante só não mostra indicadores.
 - Tela: picker em Ajustes adiciona exercício pelo id; card de Treino mostra miniatura e nome em inglês.
 
 ---
@@ -288,10 +301,11 @@ PREVISTO            FEITO
 
 ## 5. Riscos
 
-| Risco                                           | Mitigação                                                                                                                 |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Migração nome → id perde histórico              | Backup obrigatório antes; conferência do mapa contra o backup real; fallback `legacy:`; chaves `cg:*` antigas preservadas |
-| WebView despeja o IndexedDB                     | `navigator.storage.persist()`; backup manual                                                                              |
-| APK ~20 MB maior                                | Aceito para app pessoal; alternativa (só fotos da ficha + download sob demanda) descartada por complexidade               |
-| Procedência das fotos do acervo não documentada | Uso pessoal, sem distribuição; rever antes de qualquer publicação                                                         |
-| Hidratação assíncrona causa flash vazio         | `render` só após `bootstrap()`; fundo do `index.html` cobre o intervalo                                                   |
+| Risco                                                     | Mitigação                                                                                                                 |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Migração nome → id perde histórico                        | Backup obrigatório antes; conferência do mapa contra o backup real; fallback `legacy:`; chaves `cg:*` antigas preservadas |
+| WebView despeja o IndexedDB                               | `navigator.storage.persist()`; backup manual                                                                              |
+| Foto aproximada em 2 exercícios sem equivalente no acervo | Marcadas no mapa; trocar quando aparecer foto melhor                                                                      |
+| APK ~20 MB maior                                          | Aceito para app pessoal; alternativa (só fotos da ficha + download sob demanda) descartada por complexidade               |
+| Procedência das fotos do acervo não documentada           | Uso pessoal, sem distribuição; rever antes de qualquer publicação                                                         |
+| Hidratação assíncrona causa flash vazio                   | `render` só após `bootstrap()`; fundo do `index.html` cobre o intervalo                                                   |
