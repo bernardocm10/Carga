@@ -1,9 +1,11 @@
 import { create } from 'zustand'
-import { loadSupplementLog, saveSupplementLog } from './supplement-log.repo'
+import { persist } from '@/shared/db'
+import { deleteSupplementDay, loadSupplementLog, putSupplementDay } from './supplement-log.repo'
 import type { SupplementDay } from './supplement-log.types'
 
 type SupplementLogState = {
   days: SupplementDay[]
+  hydrate: () => Promise<void>
   /** alterna um suplemento na data; cria/remove o registro do dia conforme necessário */
   toggle: (date: string, name: string) => void
 }
@@ -13,7 +15,10 @@ function byDate(a: SupplementDay, b: SupplementDay): number {
 }
 
 export const useSupplementLogStore = create<SupplementLogState>((set, get) => ({
-  days: loadSupplementLog(),
+  days: [],
+  hydrate: async () => {
+    set({ days: await loadSupplementLog() })
+  },
   toggle: (date, name) => {
     const days = get().days
     const current = days.find((d) => d.date === date) ?? { date, taken: [] }
@@ -21,9 +26,14 @@ export const useSupplementLogStore = create<SupplementLogState>((set, get) => ({
       ? current.taken.filter((n) => n !== name)
       : [...current.taken, name]
     const rest = days.filter((d) => d.date !== date)
-    const next = (taken.length > 0 ? [...rest, { date, taken }] : rest).sort(byDate)
-    saveSupplementLog(next)
-    set({ days: next })
+    if (taken.length > 0) {
+      const day = { date, taken }
+      set({ days: [...rest, day].sort(byDate) })
+      persist(putSupplementDay(day))
+    } else {
+      set({ days: rest })
+      persist(deleteSupplementDay(date))
+    }
   },
 }))
 

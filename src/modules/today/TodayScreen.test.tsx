@@ -32,8 +32,10 @@ describe('TodayScreen', () => {
 
     await user.click(screen.getByRole('button', { name: /creatina/i }))
 
-    const stored: unknown = JSON.parse(localStorage.getItem('cg:supplementLog') ?? '[]')
-    expect(stored).toEqual([{ date: today, taken: ['Creatina'] }])
+    await settled()
+    expect(await db.table('supplementLog').toArray()).toEqual([
+      { date: today, taken: ['Creatina'] },
+    ])
   })
 
   it('registra o peso de hoje pelo atalho', async () => {
