@@ -58,12 +58,16 @@ export default tseslint.config(
             {
               from: { element: { type: 'root' } },
               allow: {
-                to: { element: { types: { anyOf: ['app', 'module', 'entity', 'shared', 'root'] } } },
+                to: {
+                  element: { types: { anyOf: ['app', 'module', 'entity', 'shared', 'root'] } },
+                },
               },
             },
             {
               from: { element: { type: 'app' } },
-              allow: { to: { element: { types: { anyOf: ['app', 'module', 'entity', 'shared'] } } } },
+              allow: {
+                to: { element: { types: { anyOf: ['app', 'module', 'entity', 'shared'] } } },
+              },
             },
             {
               from: { element: { type: 'module' } },
@@ -72,7 +76,9 @@ export default tseslint.config(
             {
               from: { element: { type: 'module' } },
               allow: {
-                to: { element: { type: 'module', captured: { feature: '{{from.captured.feature}}' } } },
+                to: {
+                  element: { type: 'module', captured: { feature: '{{from.captured.feature}}' } },
+                },
               },
             },
             {
@@ -82,7 +88,9 @@ export default tseslint.config(
             {
               from: { element: { type: 'entity' } },
               allow: {
-                to: { element: { type: 'entity', captured: { entity: '{{from.captured.entity}}' } } },
+                to: {
+                  element: { type: 'entity', captured: { entity: '{{from.captured.entity}}' } },
+                },
               },
             },
             {
@@ -95,6 +103,21 @@ export default tseslint.config(
     },
   },
 
+  // Dexie é detalhe de shared/db; o resto do app usa a API de @/shared/db
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/shared/db/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'dexie', message: 'Dexie só dentro de src/shared/db — use @/shared/db.' },
+          ],
+        },
+      ],
+    },
+  },
   // Tests: relax boundaries, allow deep imports
   {
     files: ['src/**/*.test.{ts,tsx}', 'src/test/**/*.{ts,tsx}'],
