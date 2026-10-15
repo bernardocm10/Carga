@@ -1,4 +1,5 @@
 import { CONFIG_ROW_ID, DB_VERSION, db } from './db'
+import { migrateV1toV2 } from './migrations/migrateV1toV2'
 import { settled } from './persist'
 
 type Dated = { date: string }
@@ -103,12 +104,19 @@ export async function exportAll(now = new Date()): Promise<string> {
 export async function importAll(json: string): Promise<void> {
   const file = parseBackup(json)
   await settled()
+  const snapshot = { config: file.config, trainingLog: file.trainingLog }
+  const migrated = file.schemaVersion < 2 ? migrateV1toV2(snapshot) : snapshot
+  const rows: Record<(typeof LOG_TABLES)[number], unknown[]> = {
+    weightLog: file.weightLog,
+    trainingLog: migrated.trainingLog,
+    supplementLog: file.supplementLog,
+  }
   const tables = [db.table('config'), ...LOG_TABLES.map((name) => db.table(name))]
   await db.transaction('rw', tables, async () => {
-    await db.table('config').put({ id: CONFIG_ROW_ID, config: file.config })
+    await db.table('config').put({ id: CONFIG_ROW_ID, config: migrated.config })
     for (const name of LOG_TABLES) {
       await db.table(name).clear()
-      await db.table(name).bulkPut(file[name])
+      await db.table(name).bulkPut(rows[name])
     }
   })
 }

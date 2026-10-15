@@ -122,7 +122,7 @@ describe('SettingsScreen · backup', () => {
     await waitFor(() => expect(shareTextFile).toHaveBeenCalledOnce())
     const [filename, text] = vi.mocked(shareTextFile).mock.calls[0] ?? []
     expect(filename).toMatch(/^claudgym-backup-\d{4}-\d{2}-\d{2}\.json$/)
-    expect(JSON.parse(text ?? '{}')).toMatchObject({ app: 'claudgym', schemaVersion: 1 })
+    expect(JSON.parse(text ?? '{}')).toMatchObject({ app: 'claudgym', schemaVersion: 2 })
   })
 
   it('importa um backup válido depois de confirmar e recarrega', async () => {

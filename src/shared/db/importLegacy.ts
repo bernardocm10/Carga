@@ -1,5 +1,6 @@
 import { kvGet } from '@/shared/storage'
 import { CONFIG_ROW_ID, db } from './db'
+import { migrateV1toV2 } from './migrations/migrateV1toV2'
 
 const FLAG = 'importedFromLocalStorage'
 
@@ -23,12 +24,15 @@ export async function importLegacyLocalStorage(now = new Date()): Promise<boolea
   return db.transaction('rw', db.tables, async () => {
     if ((await meta.get(FLAG)) !== undefined) return false
 
-    const config = kvGet<unknown>('config', null)
-    if (typeof config === 'object' && config !== null) {
-      await db.table('config').put({ id: CONFIG_ROW_ID, config })
+    const migrated = migrateV1toV2({
+      config: kvGet<unknown>('config', null),
+      trainingLog: datedRows('trainingLog'),
+    })
+    if (typeof migrated.config === 'object' && migrated.config !== null) {
+      await db.table('config').put({ id: CONFIG_ROW_ID, config: migrated.config })
     }
     await db.table('weightLog').bulkPut(datedRows('weightLog'))
-    await db.table('trainingLog').bulkPut(datedRows('trainingLog'))
+    await db.table('trainingLog').bulkPut(migrated.trainingLog)
     await db.table('supplementLog').bulkPut(datedRows('supplementLog'))
     await meta.put({ key: FLAG, value: now.toISOString() })
     return true
