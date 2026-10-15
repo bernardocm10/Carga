@@ -4,13 +4,18 @@ import { bootstrap } from '@/app/bootstrap'
 import { App } from '@/app/App'
 import '@/shared/styles/tokens.css'
 
-bootstrap()
+function render(): void {
+  const root = document.getElementById('root')
+  if (!root) throw new Error('#root element not found')
+  createRoot(root).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  )
+}
 
-const root = document.getElementById('root')
-if (!root) throw new Error('#root element not found')
-
-createRoot(root).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+void bootstrap()
+  .catch((error: unknown) => {
+    console.error('[bootstrap]', error)
+  })
+  .finally(render)
