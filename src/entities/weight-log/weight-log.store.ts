@@ -1,27 +1,31 @@
 import { create } from 'zustand'
-import { loadWeightLog, saveWeightLog } from './weight-log.repo'
+import { persist } from '@/shared/db'
+import { deleteWeightEntry, loadWeightLog, putWeightEntry } from './weight-log.repo'
 import type { WeightEntry } from './weight-log.types'
 
 type WeightLogState = {
   entries: WeightEntry[]
+  hydrate: () => Promise<void>
   /** sobrescreve a entrada da mesma data */
   addEntry: (entry: WeightEntry) => void
   removeEntry: (date: string) => void
 }
 
 export const useWeightLogStore = create<WeightLogState>((set, get) => ({
-  entries: loadWeightLog(),
+  entries: [],
+  hydrate: async () => {
+    set({ entries: await loadWeightLog() })
+  },
   addEntry: (entry) => {
     const next = [...get().entries.filter((e) => e.date !== entry.date), entry].sort((a, b) =>
       a.date.localeCompare(b.date),
     )
-    saveWeightLog(next)
     set({ entries: next })
+    persist(putWeightEntry(entry))
   },
   removeEntry: (date) => {
-    const next = get().entries.filter((e) => e.date !== date)
-    saveWeightLog(next)
-    set({ entries: next })
+    set({ entries: get().entries.filter((e) => e.date !== date) })
+    persist(deleteWeightEntry(date))
   },
 }))
 

@@ -5,6 +5,7 @@ import { CONFIG_SEED, useConfigStore } from '@/entities/config'
 import { useSupplementLogStore } from '@/entities/supplement-log'
 import { useWeightLogStore } from '@/entities/weight-log'
 import { toISODate } from '@/shared/date/week'
+import { db, settled } from '@/shared/db'
 import { TodayScreen } from './TodayScreen'
 
 const today = toISODate(new Date())
@@ -42,8 +43,8 @@ describe('TodayScreen', () => {
     await user.type(screen.getByLabelText('kg'), '63,8')
     await user.click(screen.getByRole('button', { name: /salvar/i }))
 
-    const stored: unknown = JSON.parse(localStorage.getItem('cg:weightLog') ?? '[]')
-    expect(stored).toEqual([{ date: today, kg: 63.8 }])
+    await settled()
+    expect(await db.table('weightLog').toArray()).toEqual([{ date: today, kg: 63.8 }])
     expect(screen.getByText('63,8')).toBeInTheDocument()
   })
 })

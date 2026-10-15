@@ -1,28 +1,29 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { loadWeightLog, saveWeightLog } from './weight-log.repo'
-
-beforeEach(() => {
-  localStorage.clear()
-})
+import { describe, expect, it } from 'vitest'
+import { deleteWeightEntry, loadWeightLog, putWeightEntry } from './weight-log.repo'
 
 describe('weight-log repo', () => {
-  it('devolve lista vazia sem nada salvo', () => {
-    expect(loadWeightLog()).toEqual([])
+  it('devolve lista vazia sem nada salvo', async () => {
+    expect(await loadWeightLog()).toEqual([])
   })
 
-  it('faz round-trip e mantém ordenado por data', () => {
-    saveWeightLog([
-      { date: '2026-08-10', kg: 80.2 },
-      { date: '2026-08-08', kg: 80.0 },
-    ])
-    expect(loadWeightLog()).toEqual([
+  it('grava e devolve ordenado por data', async () => {
+    await putWeightEntry({ date: '2026-08-10', kg: 80.2 })
+    await putWeightEntry({ date: '2026-08-08', kg: 80.0 })
+    expect(await loadWeightLog()).toEqual([
       { date: '2026-08-08', kg: 80.0 },
       { date: '2026-08-10', kg: 80.2 },
     ])
   })
 
-  it('cai pra lista vazia com JSON corrompido', () => {
-    localStorage.setItem('cg:weightLog', '{quebrado')
-    expect(loadWeightLog()).toEqual([])
+  it('put na mesma data sobrescreve', async () => {
+    await putWeightEntry({ date: '2026-08-10', kg: 80 })
+    await putWeightEntry({ date: '2026-08-10', kg: 81 })
+    expect(await loadWeightLog()).toEqual([{ date: '2026-08-10', kg: 81 }])
+  })
+
+  it('apaga por data', async () => {
+    await putWeightEntry({ date: '2026-08-10', kg: 80 })
+    await deleteWeightEntry('2026-08-10')
+    expect(await loadWeightLog()).toEqual([])
   })
 })

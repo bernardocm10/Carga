@@ -1,4 +1,5 @@
 import { useConfigStore } from '@/entities/config'
+import { useWeightLogStore } from '@/entities/weight-log'
 import { importLegacyLocalStorage, requestPersistentStorage } from '@/shared/db'
 import { applyTheme, loadTheme } from '@/shared/theme'
 
@@ -9,5 +10,6 @@ export async function bootstrap(): Promise<void> {
   await importLegacyLocalStorage()
   // acessar o estado dispara loadConfig() -> semeia o storage se preciso
   useConfigStore.getState()
+  await Promise.all([useWeightLogStore.getState().hydrate()])
   void requestPersistentStorage()
 }
