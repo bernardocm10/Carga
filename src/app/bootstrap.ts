@@ -10,9 +10,8 @@ export async function bootstrap(): Promise<void> {
   // o script inline no index.html já cobriu o 1º paint; aqui reconcilia
   applyTheme(loadTheme())
   await importLegacyLocalStorage()
-  // acessar o estado dispara loadConfig() -> semeia o storage se preciso
-  useConfigStore.getState()
   await Promise.all([
+    useConfigStore.getState().hydrate(),
     useWeightLogStore.getState().hydrate(),
     useSupplementLogStore.getState().hydrate(),
     useTrainingLogStore.getState().hydrate(),

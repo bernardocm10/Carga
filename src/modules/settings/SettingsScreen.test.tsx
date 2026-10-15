@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { Config } from '@/entities/config'
 import { CONFIG_SEED, useConfigStore } from '@/entities/config'
+import { CONFIG_ROW_ID, db, settled } from '@/shared/db'
 import { useThemeStore } from '@/shared/theme'
 import { SettingsScreen } from './SettingsScreen'
 
@@ -13,8 +14,11 @@ beforeEach(() => {
   delete document.documentElement.dataset.theme
 })
 
-function storedConfig(): Config {
-  return JSON.parse(localStorage.getItem('cg:config') ?? '{}') as Config
+async function storedConfig(): Promise<Config> {
+  await settled()
+  const row = await db.table<{ id: string; config: Config }, string>('config').get(CONFIG_ROW_ID)
+  if (row === undefined) throw new Error('config não gravada')
+  return row.config
 }
 
 describe('SettingsScreen', () => {
@@ -27,7 +31,7 @@ describe('SettingsScreen', () => {
     await user.type(protein, '185')
     await user.tab()
 
-    expect(storedConfig().macros.protein).toBe(185)
+    expect((await storedConfig()).macros.protein).toBe(185)
   })
 
   it('troca o tema e persiste', async () => {
@@ -62,7 +66,7 @@ describe('SettingsScreen', () => {
     await user.click(screen.getByRole('button', { name: /ombro \+ peito sup/i }))
     await user.click(screen.getByRole('button', { name: /adicionar exercício/i }))
 
-    const monday = storedConfig().trainingSplit.find((day) => day.weekday === 1)
+    const monday = (await storedConfig()).trainingSplit.find((day) => day.weekday === 1)
     expect(monday?.exercises).toEqual([{ name: 'Novo exercício', sets: 3, reps: '8-12' }])
   })
 
@@ -84,8 +88,10 @@ describe('SettingsScreen', () => {
     await user.click(screen.getByRole('button', { name: /push a/i }))
     await user.click(screen.getByRole('button', { name: /remover exercício/i }))
 
-    await waitFor(() => {
-      expect(storedConfig().trainingSplit.find((day) => day.weekday === 1)?.exercises).toEqual([])
+    await waitFor(async () => {
+      expect(
+        (await storedConfig()).trainingSplit.find((day) => day.weekday === 1)?.exercises,
+      ).toEqual([])
     })
   })
 })

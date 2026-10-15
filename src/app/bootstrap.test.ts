@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { useConfigStore } from '@/entities/config'
 import { useSupplementLogStore } from '@/entities/supplement-log'
 import { useTrainingLogStore } from '@/entities/training-log'
 import { useWeightLogStore } from '@/entities/weight-log'
@@ -6,10 +7,18 @@ import { db } from '@/shared/db'
 import { bootstrap } from './bootstrap'
 
 describe('bootstrap', () => {
-  it('importa o legado do localStorage pro banco', async () => {
+  it('importa o legado e hidrata os stores', async () => {
+    localStorage.setItem(
+      'cg:config',
+      JSON.stringify({ ...useConfigStore.getState().config, targetCalories: 3300 }),
+    )
     localStorage.setItem('cg:weightLog', JSON.stringify([{ date: '2026-08-10', kg: 80 }]))
+
     await bootstrap()
+
     expect(await db.table('weightLog').toArray()).toEqual([{ date: '2026-08-10', kg: 80 }])
+    expect(useConfigStore.getState().config.targetCalories).toBe(3300)
+    expect(useWeightLogStore.getState().entries).toEqual([{ date: '2026-08-10', kg: 80 }])
   })
 
   it('hidrata o store de peso a partir do banco', async () => {
