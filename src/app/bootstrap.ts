@@ -1,5 +1,6 @@
 import { useConfigStore } from '@/entities/config'
 import { useSupplementLogStore } from '@/entities/supplement-log'
+import { useTrainingLogStore } from '@/entities/training-log'
 import { useWeightLogStore } from '@/entities/weight-log'
 import { importLegacyLocalStorage, requestPersistentStorage } from '@/shared/db'
 import { applyTheme, loadTheme } from '@/shared/theme'
@@ -14,6 +15,7 @@ export async function bootstrap(): Promise<void> {
   await Promise.all([
     useWeightLogStore.getState().hydrate(),
     useSupplementLogStore.getState().hydrate(),
+    useTrainingLogStore.getState().hydrate(),
   ])
   void requestPersistentStorage()
 }
