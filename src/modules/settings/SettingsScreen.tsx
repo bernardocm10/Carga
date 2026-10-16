@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useConfig } from '@/entities/config'
 import { Page, Section } from '@/shared/ui/Page'
 import { AppearanceSection } from './ui/AppearanceSection'
+import { BackupSection } from './ui/BackupSection'
 import { MacrosSection } from './ui/MacrosSection'
 import { MealsSection } from './ui/MealsSection'
 import { MicroNotesSection } from './ui/MicroNotesSection'
@@ -41,6 +42,7 @@ export function SettingsScreen() {
       </Section>
 
       <AppearanceSection />
+      <BackupSection />
     </Page>
   )
 }

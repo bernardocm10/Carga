@@ -1,13 +1,24 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { Config } from '@/entities/config'
 import { CONFIG_SEED, useConfigStore } from '@/entities/config'
-import { CONFIG_ROW_ID, db, settled } from '@/shared/db'
+import { CONFIG_ROW_ID, db, exportAll, settled } from '@/shared/db'
 import { useThemeStore } from '@/shared/theme'
 import { SettingsScreen } from './SettingsScreen'
+import { shareTextFile } from '@/shared/lib/shareFile'
+import { reloadApp } from '@/shared/lib/reloadApp'
+
+vi.mock('@/shared/lib/shareFile', () => ({ shareTextFile: vi.fn(() => Promise.resolve()) }))
+vi.mock('@/shared/lib/reloadApp', () => ({ reloadApp: vi.fn() }))
+
+function backupFile(json: string): File {
+  return new File([json], 'backup.json', { type: 'application/json' })
+}
 
 beforeEach(() => {
+  vi.restoreAllMocks()
+  vi.clearAllMocks()
   localStorage.clear()
   useConfigStore.getState().replaceConfig(CONFIG_SEED)
   useThemeStore.setState({ theme: 'light' })
@@ -93,5 +104,63 @@ describe('SettingsScreen', () => {
         (await storedConfig()).trainingSplit.find((day) => day.weekday === 1)?.exercises,
       ).toEqual([])
     })
+  })
+})
+
+describe('SettingsScreen · backup', () => {
+  it('exporta o backup com nome datado', async () => {
+    const user = userEvent.setup()
+    render(<SettingsScreen />)
+
+    await user.click(screen.getByRole('button', { name: /exportar backup/i }))
+
+    await waitFor(() => expect(shareTextFile).toHaveBeenCalledOnce())
+    const [filename, text] = vi.mocked(shareTextFile).mock.calls[0] ?? []
+    expect(filename).toMatch(/^claudgym-backup-\d{4}-\d{2}-\d{2}\.json$/)
+    expect(JSON.parse(text ?? '{}')).toMatchObject({ app: 'claudgym', schemaVersion: 1 })
+  })
+
+  it('importa um backup válido depois de confirmar e recarrega', async () => {
+    const user = userEvent.setup()
+    useConfigStore.getState().replaceConfig({ ...CONFIG_SEED, targetCalories: 3500 })
+    const json = await exportAll()
+    useConfigStore.getState().replaceConfig(CONFIG_SEED)
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    render(<SettingsScreen />)
+
+    await user.upload(screen.getByLabelText(/importar backup/i), backupFile(json))
+
+    await waitFor(() => expect(reloadApp).toHaveBeenCalledOnce())
+    expect((await storedConfig()).targetCalories).toBe(3500)
+  })
+
+  it('não importa se o usuário cancelar a confirmação', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(window, 'confirm').mockReturnValue(false)
+    render(<SettingsScreen />)
+
+    await user.upload(
+      screen.getByLabelText(/importar backup/i),
+      backupFile(JSON.stringify({ app: 'outro' })),
+    )
+
+    expect(reloadApp).not.toHaveBeenCalled()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('mostra o erro de backup inválido e não recarrega', async () => {
+    const user = userEvent.setup()
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    render(<SettingsScreen />)
+
+    await user.upload(
+      screen.getByLabelText(/importar backup/i),
+      backupFile(JSON.stringify({ app: 'outro' })),
+    )
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Esse arquivo não é um backup do claudgym.',
+    )
+    expect(reloadApp).not.toHaveBeenCalled()
   })
 })
