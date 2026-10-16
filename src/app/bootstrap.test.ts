@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { useConfigStore } from '@/entities/config'
+import { useImageChoiceStore } from '@/entities/exercise-catalog'
 import { useSupplementLogStore } from '@/entities/supplement-log'
 import { useTrainingLogStore } from '@/entities/training-log'
 import { useWeightLogStore } from '@/entities/weight-log'
@@ -41,5 +42,11 @@ describe('bootstrap', () => {
     expect(useTrainingLogStore.getState().sessions).toEqual([
       { date: '2026-08-10', dayName: 'Push A', exercises: [] },
     ])
+  })
+
+  it('hidrata as escolhas de foto a partir do banco', async () => {
+    await db.table('imageChoice').put({ exerciseId: 'cg:reverse-fly', variantIndex: 1 })
+    await bootstrap()
+    expect(useImageChoiceStore.getState().choices).toEqual({ 'cg:reverse-fly': 1 })
   })
 })

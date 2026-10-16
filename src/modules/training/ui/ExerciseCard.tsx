@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import type { Exercise } from '@/entities/config'
-import { exerciseName } from '@/entities/exercise-catalog'
+import { exerciseImages, exerciseName, useImageChoice } from '@/entities/exercise-catalog'
 import { useTrainingLog, useTrainingLogStore } from '@/entities/training-log'
 import { cn } from '@/shared/lib/cn'
 import { useLeave } from '@/shared/lib/useLeave'
 import { Button } from '@/shared/ui/Button'
+import { ExerciseImage } from '@/shared/ui/ExerciseImage'
 import { NumberField } from '@/shared/ui/NumberField'
 import { lastLoadForExercise } from '@/entities/training-log'
 
@@ -48,6 +49,8 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
   const removeSet = useTrainingLogStore((state) => state.removeSet)
   const [weight, setWeight] = useState('')
   const [reps, setReps] = useState('')
+  const { selected, select } = useImageChoice(exercise.exerciseId)
+  const name = exerciseName(exercise.exerciseId)
 
   const loggedSets =
     sessions
@@ -68,13 +71,19 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
 
   return (
     <li className="border-hairline flex flex-col gap-3 border-b py-4">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="text-graphite text-sm font-semibold">
-          {exerciseName(exercise.exerciseId)}
-        </span>
-        <span className="text-graphite-soft shrink-0 text-xs">
-          {exercise.sets}×{exercise.reps}
-        </span>
+      <div className="flex items-center gap-3">
+        <ExerciseImage
+          variants={exerciseImages(exercise.exerciseId)}
+          selected={selected}
+          onSelect={select}
+          alt={name}
+        />
+        <div className="flex min-w-0 flex-1 items-baseline justify-between gap-2">
+          <span className="text-graphite text-sm font-semibold">{name}</span>
+          <span className="text-graphite-soft shrink-0 text-xs">
+            {exercise.sets}×{exercise.reps}
+          </span>
+        </div>
       </div>
 
       <p className="text-graphite-soft text-xs">
