@@ -54,7 +54,6 @@ export function BackupSection() {
         <input
           ref={fileInput}
           type="file"
-          accept="application/json,.json"
           aria-label="Importar backup"
           className="hidden"
           onChange={(event) => void importBackup(event)}

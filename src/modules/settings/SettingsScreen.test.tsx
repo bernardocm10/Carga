@@ -108,6 +108,11 @@ describe('SettingsScreen', () => {
 })
 
 describe('SettingsScreen · backup', () => {
+  it('o seletor de arquivo não filtra por tipo (backup pode chegar como octet-stream)', () => {
+    render(<SettingsScreen />)
+    expect(screen.getByLabelText(/importar backup/i)).not.toHaveAttribute('accept')
+  })
+
   it('exporta o backup com nome datado', async () => {
     const user = userEvent.setup()
     render(<SettingsScreen />)
