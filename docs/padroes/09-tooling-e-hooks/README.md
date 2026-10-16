@@ -4,10 +4,10 @@
 
 ## Husky
 
-| Hook | Roda | Objetivo |
-|---|---|---|
+| Hook           | Roda                                                                             | Objetivo                                                                    |
+| -------------- | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | **pre-commit** | `lint-staged` → Prettier + ESLint nos arquivos staged; depois `npm run test:run` | não deixa entrar código malformatado, com erro de lint, ou que quebra teste |
-| **pre-push** | `npm run typecheck` + `npm run test:run` (suíte inteira) | barra push com tipo quebrado ou regressão |
+| **pre-push**   | `npm run typecheck` + `npm run test:run` (suíte inteira)                         | barra push com tipo quebrado ou regressão                                   |
 
 `lint-staged` (no `package.json`):
 

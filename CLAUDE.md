@@ -4,7 +4,7 @@ Resumo operacional. Os padrões completos vivem em [`docs/padroes/`](docs/padroe
 
 ## Stack
 
-React web + Capacitor (`.apk` via `adb install`) · TypeScript strict · Vite · Tailwind · Zustand · localStorage atrás de camada de acesso · Recharts · Lucide · Vitest + React Testing Library.
+React web + Capacitor (`.apk` via `adb install`) · TypeScript strict · Vite · Tailwind · Zustand · IndexedDB (Dexie) atrás de repos · Recharts · Lucide · Vitest + React Testing Library.
 
 ## Arquitetura (ver [doc 03](docs/padroes/03-arquitetura-modular/README.md))
 

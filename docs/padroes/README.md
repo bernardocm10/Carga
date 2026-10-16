@@ -29,12 +29,12 @@
 
 Scaffold montado (Vite 8 + React 19 + Tailwind v4 + Zustand 5 + Vitest 4 + Husky 9 + Capacitor 8, estrutura do doc 03). Desvios conscientes em relação aos docs, por realidade de toolchain em 2026-09:
 
-| Doc diz | Scaffold faz | Motivo |
-|---|---|---|
-| `TypeScript strict` (implícito: latest) | TS **6.0.3**, não 7.0 | `typescript-eslint` ainda tem peer `typescript <6.1`; TS 7 quebraria o lint type-aware. Bump quando o ts-eslint alcançar. |
-| ESLint base inclui `eslint-plugin-jsx-a11y` | **omitido** por ora | peer do plugin ainda trava em ESLint 9; volta quando suportar ESLint 10. |
-| `cn()` = clsx + tailwind-merge | `cn()` sem deps (join simples) | YAGNI (princípio 6) — entra clsx/tailwind-merge quando conflito de classe doer. |
-| "import profundo é erro de lint" | só a **camada** é travada (`boundaries/dependencies`); deep-import via non-`index.ts` ainda não | regra de entry-point do plugin foi de. na v7; migrar pro seletor de arquivo do `dependencies`. Convenção mantida por review até lá. |
-| — | `npm audit`: 3 moderate em `@capacitor/cli` → `xcode` → `uuid` | caminho iOS-only de dev-dep; não afeta o build Android. `audit fix --force` só faz downgrade. |
+| Doc diz                                     | Scaffold faz                                                                                    | Motivo                                                                                                                              |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `TypeScript strict` (implícito: latest)     | TS **6.0.3**, não 7.0                                                                           | `typescript-eslint` ainda tem peer `typescript <6.1`; TS 7 quebraria o lint type-aware. Bump quando o ts-eslint alcançar.           |
+| ESLint base inclui `eslint-plugin-jsx-a11y` | **omitido** por ora                                                                             | peer do plugin ainda trava em ESLint 9; volta quando suportar ESLint 10.                                                            |
+| `cn()` = clsx + tailwind-merge              | `cn()` sem deps (join simples)                                                                  | YAGNI (princípio 6) — entra clsx/tailwind-merge quando conflito de classe doer.                                                     |
+| "import profundo é erro de lint"            | só a **camada** é travada (`boundaries/dependencies`); deep-import via non-`index.ts` ainda não | regra de entry-point do plugin foi de. na v7; migrar pro seletor de arquivo do `dependencies`. Convenção mantida por review até lá. |
+| —                                           | `npm audit`: 3 moderate em `@capacitor/cli` → `xcode` → `uuid`                                  | caminho iOS-only de dev-dep; não afeta o build Android. `audit fix --force` só faz downgrade.                                       |
 
-*Próximo: construir as fatias `weight`, `training`, `settings`, `guide` — cada uma via brainstorming → TDD no `domain/` → commit.*
+_Próximo: construir as fatias `weight`, `training`, `settings`, `guide` — cada uma via brainstorming → TDD no `domain/` → commit._

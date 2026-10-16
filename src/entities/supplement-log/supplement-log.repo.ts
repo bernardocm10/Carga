@@ -1,16 +1,16 @@
-import { kvGet, kvSet } from '@/shared/storage'
+import { db } from '@/shared/db'
 import type { SupplementDay } from './supplement-log.types'
 
-const KEY = 'supplementLog'
+const table = () => db.table<SupplementDay, string>('supplementLog')
 
-function byDate(a: SupplementDay, b: SupplementDay): number {
-  return a.date.localeCompare(b.date)
+export function loadSupplementLog(): Promise<SupplementDay[]> {
+  return table().orderBy('date').toArray()
 }
 
-export function loadSupplementLog(): SupplementDay[] {
-  return [...kvGet<SupplementDay[]>(KEY, [])].sort(byDate)
+export async function putSupplementDay(day: SupplementDay): Promise<void> {
+  await table().put(day)
 }
 
-export function saveSupplementLog(days: SupplementDay[]): void {
-  kvSet(KEY, [...days].sort(byDate))
+export async function deleteSupplementDay(date: string): Promise<void> {
+  await table().delete(date)
 }

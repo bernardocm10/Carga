@@ -1,16 +1,16 @@
-import { kvGet, kvSet } from '@/shared/storage'
+import { db } from '@/shared/db'
 import type { TrainingSession } from './training-log.types'
 
-const KEY = 'trainingLog'
+const table = () => db.table<TrainingSession, string>('trainingLog')
 
-function byDate(a: TrainingSession, b: TrainingSession): number {
-  return a.date.localeCompare(b.date)
+export function loadTrainingLog(): Promise<TrainingSession[]> {
+  return table().orderBy('date').toArray()
 }
 
-export function loadTrainingLog(): TrainingSession[] {
-  return [...kvGet<TrainingSession[]>(KEY, [])].sort(byDate)
+export async function putSession(session: TrainingSession): Promise<void> {
+  await table().put(session)
 }
 
-export function saveTrainingLog(sessions: TrainingSession[]): void {
-  kvSet(KEY, [...sessions].sort(byDate))
+export async function deleteSession(date: string): Promise<void> {
+  await table().delete(date)
 }

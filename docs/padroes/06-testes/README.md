@@ -2,14 +2,14 @@
 
 [↑ Índice](../README.md)
 
-| Alvo | Ferramenta | Nível esperado |
-|---|---|---|
-| `modules/*/domain/`, `shared/date/` | Vitest | **TDD**, cobertura alta, casos de borda explícitos |
-| `shared/storage/` (parse, migração, corrupção) | Vitest | todo caminho de migração + JSON inválido → fallback |
-| `entities/*/` (repo ↔ store, seleção) | Vitest | round-trip persistido↔memória; mutação persiste |
-| Telas críticas (`today`, `weight`, `training`) | React Testing Library | renderiza, interage, verifica o que aparece; stores mockadas |
-| `shared/ui/` puros | RTL | só se houver lógica visual não-trivial (ex: proporção de anilha na `LoadedBar`) |
-| Fluxo ponta-a-ponta no navegador | — | **fora de escopo na v1** |
+| Alvo                                           | Ferramenta              | Nível esperado                                                                  |
+| ---------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------- |
+| `modules/*/domain/`, `shared/date/`            | Vitest                  | **TDD**, cobertura alta, casos de borda explícitos                              |
+| `shared/db/` (migração, legado, backup)        | Vitest + fake-indexeddb | todo `upgrade` + legado malformado + backup inválido                            |
+| `entities/*/` (repo ↔ store, seleção)          | Vitest                  | round-trip persistido↔memória; mutação persiste                                 |
+| Telas críticas (`today`, `weight`, `training`) | React Testing Library   | renderiza, interage, verifica o que aparece; stores mockadas                    |
+| `shared/ui/` puros                             | RTL                     | só se houver lógica visual não-trivial (ex: proporção de anilha na `LoadedBar`) |
+| Fluxo ponta-a-ponta no navegador               | —                       | **fora de escopo na v1**                                                        |
 
 ## Casos de borda obrigatórios
 

@@ -1,16 +1,7 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { bootstrap } from '@/app/bootstrap'
-import { App } from '@/app/App'
+import { start } from '@/app/start'
 import '@/shared/styles/tokens.css'
 
-bootstrap()
+const container = document.getElementById('root')
+if (!container) throw new Error('#root element not found')
 
-const root = document.getElementById('root')
-if (!root) throw new Error('#root element not found')
-
-createRoot(root).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+void start(container)

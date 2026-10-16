@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CONFIG_SEED, useConfigStore } from '@/entities/config'
 import { useTrainingLogStore } from '@/entities/training-log'
+import { db, settled } from '@/shared/db'
 import { TrainingScreen } from './TrainingScreen'
 
 beforeEach(() => {
@@ -42,7 +43,8 @@ describe('TrainingScreen', () => {
     await user.type(screen.getByLabelText('Reps'), '6')
     await user.click(screen.getByRole('button', { name: '+' }))
 
-    const stored: unknown = JSON.parse(localStorage.getItem('cg:trainingLog') ?? '[]')
+    await settled()
+    const stored: unknown = await db.table('trainingLog').toArray()
     expect(stored).toEqual([
       expect.objectContaining({
         dayName: 'Push A',

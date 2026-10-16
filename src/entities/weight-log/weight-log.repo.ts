@@ -1,16 +1,16 @@
-import { kvGet, kvSet } from '@/shared/storage'
+import { db } from '@/shared/db'
 import type { WeightEntry } from './weight-log.types'
 
-const KEY = 'weightLog'
+const table = () => db.table<WeightEntry, string>('weightLog')
 
-function byDate(a: WeightEntry, b: WeightEntry): number {
-  return a.date.localeCompare(b.date)
+export function loadWeightLog(): Promise<WeightEntry[]> {
+  return table().orderBy('date').toArray()
 }
 
-export function loadWeightLog(): WeightEntry[] {
-  return [...kvGet<WeightEntry[]>(KEY, [])].sort(byDate)
+export async function putWeightEntry(entry: WeightEntry): Promise<void> {
+  await table().put(entry)
 }
 
-export function saveWeightLog(entries: WeightEntry[]): void {
-  kvSet(KEY, [...entries].sort(byDate))
+export async function deleteWeightEntry(date: string): Promise<void> {
+  await table().delete(date)
 }
