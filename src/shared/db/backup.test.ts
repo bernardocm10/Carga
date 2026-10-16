@@ -5,8 +5,32 @@ import { persist } from './persist'
 
 const NOW = new Date('2026-10-16T12:00:00.000Z')
 
+const CONFIG = {
+  targetCalories: 3150,
+  macros: { protein: 180, carbs: 400, fat: 90 },
+  weightGoalMinG: 200,
+  weightGoalMaxG: 400,
+  weightAlertPct: 0.5,
+  supplements: [],
+  trainingSplit: [],
+  meals: [],
+  micronotes: [],
+}
+
+function backupWith(patch: Record<string, unknown>): string {
+  return JSON.stringify({
+    app: 'claudgym',
+    schemaVersion: 1,
+    config: CONFIG,
+    weightLog: [],
+    trainingLog: [],
+    supplementLog: [],
+    ...patch,
+  })
+}
+
 async function seed(): Promise<void> {
-  await db.table('config').put({ id: 'main', config: { targetCalories: 3150 } })
+  await db.table('config').put({ id: 'main', config: CONFIG })
   await db.table('weightLog').bulkPut([
     { date: '2026-08-10', kg: 80 },
     { date: '2026-08-08', kg: 79.5 },
@@ -32,7 +56,7 @@ describe('exportAll', () => {
       app: 'claudgym',
       schemaVersion: 1,
       exportedAt: '2026-10-16T12:00:00.000Z',
-      config: { targetCalories: 3150 },
+      config: CONFIG,
       weightLog: [
         { date: '2026-08-08', kg: 79.5 },
         { date: '2026-08-10', kg: 80 },
@@ -106,7 +130,7 @@ describe('importAll', () => {
       JSON.stringify({
         app: 'claudgym',
         schemaVersion: 1,
-        config: {},
+        config: CONFIG,
         weightLog: {},
         trainingLog: [],
         supplementLog: [],
@@ -118,12 +142,34 @@ describe('importAll', () => {
       JSON.stringify({
         app: 'claudgym',
         schemaVersion: 1,
-        config: {},
+        config: CONFIG,
         weightLog: [{ kg: 80 }],
         trainingLog: [],
         supplementLog: [],
       }),
       'Backup inválido: weightLog.',
+    ],
+    ['config vazia', backupWith({ config: {} }), 'Backup inválido: config.'],
+    ['config lista', backupWith({ config: [] }), 'Backup inválido: config.'],
+    [
+      'config sem a ficha',
+      backupWith({ config: { ...CONFIG, trainingSplit: undefined } }),
+      'Backup inválido: config.',
+    ],
+    [
+      'peso sem kg',
+      backupWith({ weightLog: [{ date: '2026-08-10' }] }),
+      'Backup inválido: weightLog.',
+    ],
+    [
+      'treino sem exercícios',
+      backupWith({ trainingLog: [{ date: '2026-08-10', dayName: 'Push A' }] }),
+      'Backup inválido: trainingLog.',
+    ],
+    [
+      'suplemento sem taken',
+      backupWith({ supplementLog: [{ date: '2026-08-10' }] }),
+      'Backup inválido: supplementLog.',
     ],
   ])('rejeita sem tocar nos dados: %s', async (_case, json, message) => {
     await seed()

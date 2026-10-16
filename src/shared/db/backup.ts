@@ -19,12 +19,36 @@ export class BackupError extends Error {
   override name = 'BackupError'
 }
 
-function isDatedList(value: unknown): value is Dated[] {
+type Row = Record<string, unknown>
+
+function isRecord(value: unknown): value is Row {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/** Formato mínimo que as telas leem sem quebrar; o resto do conteúdo é do usuário. */
+function isConfig(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    ['targetCalories', 'weightGoalMinG', 'weightGoalMaxG', 'weightAlertPct'].every(
+      (key) => typeof value[key] === 'number',
+    ) &&
+    isRecord(value.macros) &&
+    ['supplements', 'trainingSplit', 'meals', 'micronotes'].every((key) =>
+      Array.isArray(value[key]),
+    )
+  )
+}
+
+const ROW_SHAPE: Record<(typeof LOG_TABLES)[number], (row: Row) => boolean> = {
+  weightLog: (row) => typeof row.kg === 'number',
+  trainingLog: (row) => typeof row.dayName === 'string' && Array.isArray(row.exercises),
+  supplementLog: (row) => Array.isArray(row.taken),
+}
+
+function isLog(name: (typeof LOG_TABLES)[number], value: unknown): value is Dated[] {
   return (
     Array.isArray(value) &&
-    value.every(
-      (row) => typeof row === 'object' && row !== null && typeof (row as Dated).date === 'string',
-    )
+    value.every((row) => isRecord(row) && typeof row.date === 'string' && ROW_SHAPE[name](row))
   )
 }
 
@@ -47,11 +71,12 @@ function parseBackup(json: string): BackupFile {
       'Backup de uma versão mais nova do app — atualize o app antes de importar.',
     )
   }
-  if (typeof file.config !== 'object' || file.config === null) {
+  if (file.config === undefined || file.config === null) {
     throw new BackupError('Backup incompleto: falta a config.')
   }
+  if (!isConfig(file.config)) throw new BackupError('Backup inválido: config.')
   for (const name of LOG_TABLES) {
-    if (!isDatedList(file[name])) throw new BackupError(`Backup inválido: ${name}.`)
+    if (!isLog(name, file[name])) throw new BackupError(`Backup inválido: ${name}.`)
   }
   return file as BackupFile
 }
