@@ -2,33 +2,40 @@
 
 [↑ Índice](../README.md)
 
-## 5.1 Chaves
+## 5.1 Banco
 
-Namespaced, uma por entity, prefixo `cg:` (claudgym):
+IndexedDB via **Dexie**, instância única em `src/shared/db/db.ts` (banco `claudgym`). Só `src/shared/db/` importa `dexie` (regra de lint).
 
-```
-cg:schemaVersion      → number
-cg:config             → Config
-cg:weightLog          → WeightEntry[]
-cg:trainingLog        → TrainingSession[]
-cg:supplementLog      → Record<ISODate, string[]>
-```
+| Tabela          | Chave  | Conteúdo                                          |
+| --------------- | ------ | ------------------------------------------------- |
+| `config`        | `id`   | `{ id: 'main', config: Config }`                  |
+| `weightLog`     | `date` | `WeightEntry`                                     |
+| `trainingLog`   | `date` | `TrainingSession`                                 |
+| `supplementLog` | `date` | `SupplementDay`                                   |
+| `meta`          | `key`  | `{ key, value }` — ex. `importedFromLocalStorage` |
 
-Nenhum arquivo fora de `shared/storage` e das `*.repo.ts` conhece essas strings.
+Nenhum arquivo fora de `shared/db` e dos `*.repo.ts` conhece nomes de tabela.
 
-## 5.2 Versão de schema e migração
+**Exceção:** o tema fica em `localStorage` (`cg:theme`), porque o script inline do `index.html` lê de forma síncrona antes do 1º paint.
 
-- `shared/storage/schema.ts` exporta `SCHEMA_VERSION` (inteiro) e o shape persistido de cada chave.
-- `shared/storage/migrations.ts` é uma lista ordenada `{ to: number, run(raw): raw }`.
-- `app/bootstrap.ts` roda no 1º render: lê `cg:schemaVersion`, aplica as migrações pendentes em ordem, grava a versão nova.
-- **Toda mudança no formato de um dado persistido** exige: bump de `SCHEMA_VERSION` + uma migração + teste da migração.
+## 5.2 Repos e stores
 
-## 5.3 Falha e semente
+- Repo: funções assíncronas e granulares (`load*`, `put*`, `delete*`).
+- Store Zustand: nasce vazio (ou com a semente, no caso da config), ganha `hydrate()`. Ações são síncronas para a UI: atualizam a memória e chamam `persist(promessaDeEscrita)`.
+- `persist` rastreia a escrita; `settled()` espera todas — usado por testes e pelo backup.
+- `app/bootstrap.ts` (async): importa o legado → hidrata todos os stores → pede `navigator.storage.persist()`. `main.tsx` só renderiza depois.
 
-- `kvGet<T>` faz `JSON.parse` dentro de `try/catch`. Erro, chave ausente ou shape inválido → retorna o default fornecido (para `config`, a `seed`; para os logs, `[]`/`{}`).
-- Semear a Config acontece só quando `cg:config` não existe. Depois disso, o que vale é o storage — a `seed` nunca sobrescreve.
+## 5.3 Versão de schema e migração
 
-## 5.4 Backup
+- `DB_VERSION` em `shared/db/db.ts`. Toda mudança de formato persistido = nova `db.version(n).stores(...).upgrade(...)` + teste.
+- A transformação de dado do `upgrade` é escrita como **função pura** e reaproveitada pelo `importAll` para backups de versão antiga.
 
-- `shared/storage/backup.ts`: `exportAll()` serializa as 5 chaves num JSON único; `importAll(json)` valida e regrava (rodando migração se a versão do arquivo for antiga).
-- A aba **Ajustes** expõe exportar/importar. É o único mecanismo de "sync" da v1.
+## 5.4 Legado (localStorage)
+
+`importLegacyLocalStorage()` copia `cg:config`, `cg:weightLog`, `cg:trainingLog`, `cg:supplementLog` para o banco **uma vez** (marca em `meta`). As chaves antigas **não são apagadas**.
+
+## 5.5 Backup
+
+- `exportAll()` → JSON `{ app, schemaVersion, exportedAt, config, weightLog, trainingLog, supplementLog }`.
+- `importAll(json)` valida o arquivo inteiro antes de escrever (`BackupError` com mensagem pronta pra UI), recusa versão mais nova que o app e substitui config + logs numa transação. `meta` não é tocado.
+- Aba **Ajustes → Backup**: exportar abre o share sheet no Android (`@capacitor/filesystem` + `@capacitor/share`) e baixa o arquivo no navegador; importar pede confirmação e recarrega o app.

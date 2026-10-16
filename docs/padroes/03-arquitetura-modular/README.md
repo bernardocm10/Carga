@@ -12,12 +12,12 @@ O import **só desce**, nunca sobe:
 app  →  modules  →  entities  →  shared
 ```
 
-| Camada | O que é | Pode importar |
-|---|---|---|
-| `app/` | bootstrap, providers, shell de navegação, registro de abas | `modules`, `entities`, `shared` |
-| `modules/` | uma fatia por aba — autocontida (UI + lógica da feature + composição de dados) | `entities`, `shared` |
-| `entities/` | dado de domínio que cruza features: model + persistência, agnóstico de tela | `shared` |
-| `shared/` | design system, engine de storage, date, libs genéricas — zero regra de negócio | só `shared` |
+| Camada      | O que é                                                                        | Pode importar                   |
+| ----------- | ------------------------------------------------------------------------------ | ------------------------------- |
+| `app/`      | bootstrap, providers, shell de navegação, registro de abas                     | `modules`, `entities`, `shared` |
+| `modules/`  | uma fatia por aba — autocontida (UI + lógica da feature + composição de dados) | `entities`, `shared`            |
+| `entities/` | dado de domínio que cruza features: model + persistência, agnóstico de tela    | `shared`                        |
+| `shared/`   | design system, engine de storage, date, libs genéricas — zero regra de negócio | só `shared`                     |
 
 ## 3.2 Regras de encaixe
 
@@ -33,7 +33,7 @@ src/
 ├── app/
 │   ├── App.tsx            # providers + <TabBar/> + tela ativa
 │   ├── tabs.ts            # registro: [todayTab, weightTab, ...] — nova aba = +1 linha
-│   └── bootstrap.ts       # roda migrations + semeia Config no 1º launch
+│   └── bootstrap.ts       # importa o legado do localStorage + hidrata os stores
 │
 ├── modules/
 │   ├── today/
@@ -63,7 +63,8 @@ src/
 │
 ├── shared/
 │   ├── ui/                # Card, NumberField, Button, Tag, Sheet, WeekStrip, LoadedBar
-│   ├── storage/           # kvGet/kvSet<T>, schema.ts, migrations.ts, backup.ts
+│   ├── db/                # Dexie (só aqui), persist/settled, importLegacy, backup
+│   ├── storage/           # kvGet/kvSet<T> (tema + leitura do legado)
 │   ├── date/              # week(), dayToWorkout(), dateRange(), today()
 │   ├── lib/               # cn(), formatters
 │   └── styles/            # tokens.css (@import 'tailwindcss' + @theme com a paleta/fontes)
@@ -94,8 +95,8 @@ Os subdiretórios `ui/ domain/ model/` só aparecem quando há **mais de ~3 arqu
 entities/<name>/
 ├── index.ts          # API pública: hook(s), ações, tipos. Nada mais sai daqui.
 ├── <name>.types.ts   # shape em memória + shape persistido
-├── <name>.repo.ts    # leitura/escrita via shared/storage; converte persistido ↔ memória
-├── <name>.store.ts   # store Zustand; inicializa a partir do repo, persiste em cada mutação
+├── <name>.repo.ts    # load/put/delete assíncronos via shared/db
+├── <name>.store.ts   # store Zustand; hydrate() no boot, persist() em cada mutação
 └── <name>.selectors.ts  # (opcional) derivações puras sobre o estado
 ```
 
@@ -108,7 +109,7 @@ entities/<name>/
 // shared/ui/tab-module.ts
 export type TabModule = {
   id: string
-  label: string           // texto PT-BR da barra
+  label: string // texto PT-BR da barra
   icon: LucideIcon
   Screen: React.ComponentType
 }
@@ -121,7 +122,10 @@ import type { TabModule } from '@/shared/ui/tab-module'
 import { WeightScreen } from './WeightScreen'
 
 export const weightTab: TabModule = {
-  id: 'weight', label: 'Peso', icon: Scale, Screen: WeightScreen,
+  id: 'weight',
+  label: 'Peso',
+  icon: Scale,
+  Screen: WeightScreen,
 }
 ```
 
@@ -137,6 +141,7 @@ export const TABS: TabModule[] = [todayTab, weightTab, trainingTab, settingsTab,
 ```
 
 **v2 na prática:**
+
 - **Nova aba** → cria `modules/<nova>/`, exporta o descriptor no `index.ts`, adiciona 1 linha em `tabs.ts`. Nada mais é tocado.
-- **Novo dado persistido** → cria `entities/<nova>-log/`, registra a chave e a migração em `shared/storage`. Módulos aderem importando o hook.
+- **Novo dado persistido** → cria `entities/<nova>-log/`, registra a tabela (nova `db.version`) em `shared/db`. Módulos aderem importando o hook.
 - **Novo primitivo visual** → adiciona em `shared/ui/`, exporta no barrel.

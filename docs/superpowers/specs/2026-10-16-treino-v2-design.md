@@ -76,7 +76,7 @@ O versionamento do Dexie (`db.version(n).stores(...).upgrade(tx => ...)`) substi
 - `exportAll(): Promise<string>` — JSON `{ schemaVersion, exportedAt, config, weightLog, trainingLog, supplementLog }`.
 - `importAll(json): Promise<void>` — valida shape mínimo, recusa `schemaVersion` maior que o do app, substitui as tabelas numa transação e reidrata os stores. Arquivo de versão antiga é aceito e passa pelas mesmas funções de `upgrade` (extraídas como funções puras para isso).
 
-Aba **Ajustes** ganha seção "Backup": **Exportar** (download do `.json` via `<a download>`; no Android o WebView salva em Downloads) e **Importar** (`<input type="file">`, com confirmação "isso substitui todos os dados").
+Aba **Ajustes** ganha seção "Backup": **Exportar** (no Android grava em cache e abre o share sheet — `@capacitor/filesystem` + `@capacitor/share`, pois o WebView não trata `<a download>` de blob; no navegador, download via `<a download>`) e **Importar** (`<input type="file">`, com confirmação "isso substitui todos os dados").
 
 ### 2.6 Testes
 

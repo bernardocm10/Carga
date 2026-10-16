@@ -15,10 +15,10 @@
 
 ## 7.3 Ajuste de dado vs. ajuste estrutural
 
-| | Quem faz | Como |
-|---|---|---|
-| **Ajuste de dado** (kcal, dose de suplemento, trocar exercício, macro) | o usuário | aba **Ajustes**, sem código, sem commit |
-| **Ajuste estrutural** (lógica de tela, aba nova, novo gráfico, formato de dado) | Claude | brainstorming → implementação → commit |
+|                                                                                 | Quem faz  | Como                                    |
+| ------------------------------------------------------------------------------- | --------- | --------------------------------------- |
+| **Ajuste de dado** (kcal, dose de suplemento, trocar exercício, macro)          | o usuário | aba **Ajustes**, sem código, sem commit |
+| **Ajuste estrutural** (lógica de tela, aba nova, novo gráfico, formato de dado) | Claude    | brainstorming → implementação → commit  |
 
 Claude continua ajudando a **decidir os números** nas conversas; quem **aplica** o número é o usuário na aba Ajustes.
 
