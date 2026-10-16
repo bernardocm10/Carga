@@ -16,8 +16,12 @@ describe('training-log store', () => {
   })
 
   it('logSet grava a sessão do dia', async () => {
-    useTrainingLogStore.getState().logSet('2026-08-10', 'Push A', 'Supino', { weight: 40, reps: 6 })
-    useTrainingLogStore.getState().logSet('2026-08-10', 'Push A', 'Supino', { weight: 42, reps: 5 })
+    useTrainingLogStore
+      .getState()
+      .logSet('2026-08-10', 'Push A', 'Hammer_Curls', { weight: 40, reps: 6 })
+    useTrainingLogStore
+      .getState()
+      .logSet('2026-08-10', 'Push A', 'Hammer_Curls', { weight: 42, reps: 5 })
     await settled()
     expect(await db.table('trainingLog').toArray()).toEqual([
       {
@@ -25,7 +29,7 @@ describe('training-log store', () => {
         dayName: 'Push A',
         exercises: [
           {
-            name: 'Supino',
+            exerciseId: 'Hammer_Curls',
             sets: [
               { weight: 40, reps: 6 },
               { weight: 42, reps: 5 },
@@ -37,27 +41,35 @@ describe('training-log store', () => {
   })
 
   it('removeSet da última série apaga a sessão do banco', async () => {
-    useTrainingLogStore.getState().logSet('2026-08-10', 'Push A', 'Supino', { weight: 40, reps: 6 })
-    useTrainingLogStore.getState().removeSet('2026-08-10', 'Supino', 0)
+    useTrainingLogStore
+      .getState()
+      .logSet('2026-08-10', 'Push A', 'Hammer_Curls', { weight: 40, reps: 6 })
+    useTrainingLogStore.getState().removeSet('2026-08-10', 'Hammer_Curls', 0)
     await settled()
     expect(useTrainingLogStore.getState().sessions).toEqual([])
     expect(await db.table('trainingLog').count()).toBe(0)
   })
 
   it('removeSet com outras séries regrava a sessão', async () => {
-    useTrainingLogStore.getState().logSet('2026-08-10', 'Push A', 'Supino', { weight: 40, reps: 6 })
-    useTrainingLogStore.getState().logSet('2026-08-10', 'Push A', 'Remada', { weight: 30, reps: 8 })
-    useTrainingLogStore.getState().removeSet('2026-08-10', 'Supino', 0)
+    useTrainingLogStore
+      .getState()
+      .logSet('2026-08-10', 'Push A', 'Hammer_Curls', { weight: 40, reps: 6 })
+    useTrainingLogStore
+      .getState()
+      .logSet('2026-08-10', 'Push A', 'Seated_Cable_Rows', { weight: 30, reps: 8 })
+    useTrainingLogStore.getState().removeSet('2026-08-10', 'Hammer_Curls', 0)
     await settled()
     expect(await db.table('trainingLog').get('2026-08-10')).toEqual({
       date: '2026-08-10',
       dayName: 'Push A',
-      exercises: [{ name: 'Remada', sets: [{ weight: 30, reps: 8 }] }],
+      exercises: [{ exerciseId: 'Seated_Cable_Rows', sets: [{ weight: 30, reps: 8 }] }],
     })
   })
 
   it('removeSession apaga do banco', async () => {
-    useTrainingLogStore.getState().logSet('2026-08-10', 'Push A', 'Supino', { weight: 40, reps: 6 })
+    useTrainingLogStore
+      .getState()
+      .logSet('2026-08-10', 'Push A', 'Hammer_Curls', { weight: 40, reps: 6 })
     useTrainingLogStore.getState().removeSession('2026-08-10')
     await settled()
     expect(await db.table('trainingLog').count()).toBe(0)

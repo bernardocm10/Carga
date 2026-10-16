@@ -1,4 +1,5 @@
 import { useConfigStore } from '@/entities/config'
+import { useImageChoiceStore } from '@/entities/exercise-catalog'
 import { useSupplementLogStore } from '@/entities/supplement-log'
 import { useTrainingLogStore } from '@/entities/training-log'
 import { useWeightLogStore } from '@/entities/weight-log'
@@ -15,6 +16,7 @@ export async function bootstrap(): Promise<void> {
     useWeightLogStore.getState().hydrate(),
     useSupplementLogStore.getState().hydrate(),
     useTrainingLogStore.getState().hydrate(),
+    useImageChoiceStore.getState().hydrate(),
   ])
   void requestPersistentStorage()
 }

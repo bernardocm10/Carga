@@ -66,7 +66,7 @@ describe('SettingsScreen', () => {
     expect(screen.getByRole('button', { name: /adicionar exercício/i })).toBeInTheDocument()
   })
 
-  it('adiciona um exercício ao dia aberto', async () => {
+  it('adiciona o exercício escolhido no seletor', async () => {
     const user = userEvent.setup()
     useConfigStore.getState().replaceConfig({
       ...CONFIG_SEED,
@@ -76,9 +76,47 @@ describe('SettingsScreen', () => {
 
     await user.click(screen.getByRole('button', { name: /ombro \+ peito sup/i }))
     await user.click(screen.getByRole('button', { name: /adicionar exercício/i }))
+    await user.type(screen.getByLabelText('Buscar'), 'romanian')
+    await user.click(screen.getByText('Romanian Deadlift'))
 
     const monday = (await storedConfig()).trainingSplit.find((day) => day.weekday === 1)
-    expect(monday?.exercises).toEqual([{ name: 'Novo exercício', sets: 3, reps: '8-12' }])
+    expect(monday?.exercises).toEqual([{ exerciseId: 'Romanian_Deadlift', sets: 3, reps: '8-12' }])
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('troca o exercício pelo seletor mantendo séries e reps', async () => {
+    const user = userEvent.setup()
+    useConfigStore.getState().replaceConfig({
+      ...CONFIG_SEED,
+      trainingSplit: [
+        {
+          weekday: 1,
+          name: 'Push A',
+          focus: 'Força',
+          exercises: [{ exerciseId: 'Leg_Press', sets: 4, reps: '5' }],
+        },
+      ],
+    })
+    render(<SettingsScreen />)
+
+    await user.click(screen.getByRole('button', { name: /push a/i }))
+    await user.click(screen.getByRole('button', { name: /trocar exercício leg press/i }))
+    await user.type(screen.getByLabelText('Buscar'), 'romanian')
+    await user.click(screen.getByText('Romanian Deadlift'))
+
+    const monday = (await storedConfig()).trainingSplit.find((day) => day.weekday === 1)
+    expect(monday?.exercises).toEqual([{ exerciseId: 'Romanian_Deadlift', sets: 4, reps: '5' }])
+  })
+
+  it('o seletor mostra aviso quando a busca não acha nada', async () => {
+    const user = userEvent.setup()
+    render(<SettingsScreen />)
+
+    await user.click(screen.getByRole('button', { name: /ombro \+ peito sup/i }))
+    await user.click(screen.getByRole('button', { name: /adicionar exercício/i }))
+    await user.type(screen.getByLabelText('Buscar'), 'zzzzzz')
+
+    expect(screen.getByText('Nenhum exercício encontrado.')).toBeInTheDocument()
   })
 
   it('remove um exercício após a animação de saída', async () => {
@@ -90,7 +128,7 @@ describe('SettingsScreen', () => {
           weekday: 1,
           name: 'Push A',
           focus: 'Força',
-          exercises: [{ name: 'Supino', sets: 4, reps: '5' }],
+          exercises: [{ exerciseId: 'Leg_Press', sets: 4, reps: '5' }],
         },
       ],
     })
@@ -122,7 +160,7 @@ describe('SettingsScreen · backup', () => {
     await waitFor(() => expect(shareTextFile).toHaveBeenCalledOnce())
     const [filename, text] = vi.mocked(shareTextFile).mock.calls[0] ?? []
     expect(filename).toMatch(/^claudgym-backup-\d{4}-\d{2}-\d{2}\.json$/)
-    expect(JSON.parse(text ?? '{}')).toMatchObject({ app: 'claudgym', schemaVersion: 1 })
+    expect(JSON.parse(text ?? '{}')).toMatchObject({ app: 'claudgym', schemaVersion: 2 })
   })
 
   it('importa um backup válido depois de confirmar e recarrega', async () => {

@@ -1,4 +1,5 @@
 import type { Exercise } from '@/entities/config'
+import { exerciseName } from '@/entities/exercise-catalog'
 import { cn } from '@/shared/lib/cn'
 import { useLeave } from '@/shared/lib/useLeave'
 
@@ -7,6 +8,7 @@ type Props = {
   canMoveUp: boolean
   canMoveDown: boolean
   onPatch: (patch: Partial<Exercise>) => void
+  onChangeExercise: () => void
   onRemove: () => void
   onMove: (direction: -1 | 1) => void
 }
@@ -19,10 +21,12 @@ export function ExerciseRow({
   canMoveUp,
   canMoveDown,
   onPatch,
+  onChangeExercise,
   onRemove,
   onMove,
 }: Props) {
   const { leaving, leave } = useLeave(onRemove)
+  const name = exerciseName(exercise.exerciseId)
 
   return (
     <div
@@ -31,16 +35,14 @@ export function ExerciseRow({
         leaving ? 'cg-leave' : 'cg-enter',
       )}
     >
-      <input
-        aria-label="Exercício"
-        defaultValue={exercise.name}
-        className="text-graphite focus:border-hairline focus:bg-chalk font-body min-w-0 rounded border border-transparent bg-transparent px-1 py-1 text-sm focus:outline-none"
-        onBlur={(event) => {
-          const value = event.target.value.trim()
-          if (value && value !== exercise.name) onPatch({ name: value })
-          else event.target.value = exercise.name
-        }}
-      />
+      <button
+        type="button"
+        aria-label={`Trocar exercício ${name}`}
+        onClick={onChangeExercise}
+        className="text-graphite hover:bg-chalk font-body min-w-0 truncate rounded px-1 py-1 text-left text-sm"
+      >
+        {name}
+      </button>
 
       <input
         aria-label="Séries"

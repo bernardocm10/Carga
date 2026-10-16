@@ -77,4 +77,56 @@ describe('importLegacyLocalStorage', () => {
       { date: '2026-08-11', taken: ['Creatina'] },
     ])
   })
+
+  it('converte nomes de exercício em ids sem tocar no localStorage', async () => {
+    localStorage.setItem(
+      'cg:config',
+      JSON.stringify({
+        targetCalories: 3300,
+        trainingSplit: [
+          {
+            weekday: 1,
+            name: 'Push',
+            focus: 'x',
+            exercises: [{ name: 'Rosca martelo', sets: 3, reps: '8-15' }],
+          },
+        ],
+      }),
+    )
+    localStorage.setItem(
+      'cg:trainingLog',
+      JSON.stringify([
+        {
+          date: '2026-08-10',
+          dayName: 'Push',
+          exercises: [{ name: 'Leg press', sets: [{ weight: 100, reps: 8 }] }],
+        },
+      ]),
+    )
+
+    await importLegacyLocalStorage(NOW)
+
+    expect(await db.table('config').get('main')).toEqual({
+      id: 'main',
+      config: {
+        targetCalories: 3300,
+        trainingSplit: [
+          {
+            weekday: 1,
+            name: 'Push',
+            focus: 'x',
+            exercises: [{ exerciseId: 'Hammer_Curls', sets: 3, reps: '8-15' }],
+          },
+        ],
+      },
+    })
+    expect(await db.table('trainingLog').toArray()).toEqual([
+      {
+        date: '2026-08-10',
+        dayName: 'Push',
+        exercises: [{ exerciseId: 'Leg_Press', sets: [{ weight: 100, reps: 8 }] }],
+      },
+    ])
+    expect(localStorage.getItem('cg:trainingLog')).toContain('Leg press')
+  })
 })

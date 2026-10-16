@@ -6,7 +6,7 @@ import boundaries from 'eslint-plugin-boundaries'
 import globals from 'globals'
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'android', 'node_modules'] },
+  { ignores: ['dist', 'coverage', 'android', 'node_modules', 'scripts'] },
 
   js.configs.recommended,
   tseslint.configs.recommendedTypeChecked,

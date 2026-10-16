@@ -26,6 +26,7 @@ app  →  modules  →  entities  →  shared
 - `npm test` — testes em watch
 - `npm run test:run` — rodada única (hooks/CI)
 - `npm run typecheck` — `tsc --noEmit`
+- `npm run catalog:build` — regenera `catalog.json` e as fotos em `public/exercises/` (precisa de rede; só quando o catálogo mudar)
 
 ## Git (ver [doc 08](docs/padroes/08-git-e-commits/README.md))
 

@@ -54,7 +54,7 @@ describe('exportAll', () => {
     const file = JSON.parse(await exportAll(NOW)) as Record<string, unknown>
     expect(file).toEqual({
       app: 'claudgym',
-      schemaVersion: 1,
+      schemaVersion: 2,
       exportedAt: '2026-10-16T12:00:00.000Z',
       config: CONFIG,
       weightLog: [
@@ -178,5 +178,68 @@ describe('importAll', () => {
     await expect(importAll(json)).rejects.toThrow(new BackupError(message))
 
     expect(await snapshot()).toEqual(before)
+  })
+})
+
+describe('importAll · backup v1', () => {
+  const FICHA_V1 = [
+    {
+      weekday: 1,
+      name: 'Push',
+      focus: 'x',
+      exercises: [
+        { name: 'Rosca martelo', sets: 3, reps: '8-15' },
+        { name: 'Exercício antigo', sets: 2, reps: '8' },
+      ],
+    },
+  ]
+  const SESSAO_V1 = {
+    date: '2026-09-02',
+    dayName: 'Pernas',
+    exercises: [{ name: 'Leg press', sets: [{ weight: 120, reps: 8 }] }],
+  }
+
+  it('converte nomes em ids ao importar', async () => {
+    await importAll(
+      backupWith({
+        config: { ...CONFIG, trainingSplit: FICHA_V1 },
+        trainingLog: [SESSAO_V1],
+      }),
+    )
+
+    expect(await db.table('config').get('main')).toEqual({
+      id: 'main',
+      config: {
+        ...CONFIG,
+        trainingSplit: [
+          {
+            weekday: 1,
+            name: 'Push',
+            focus: 'x',
+            exercises: [
+              { exerciseId: 'Hammer_Curls', sets: 3, reps: '8-15' },
+              { exerciseId: 'legacy:Exercício antigo', sets: 2, reps: '8' },
+            ],
+          },
+        ],
+      },
+    })
+    expect(await db.table('trainingLog').toArray()).toEqual([
+      {
+        date: '2026-09-02',
+        dayName: 'Pernas',
+        exercises: [{ exerciseId: 'Leg_Press', sets: [{ weight: 120, reps: 8 }] }],
+      },
+    ])
+  })
+
+  it('backup v2 não é convertido de novo', async () => {
+    const sessionV2 = {
+      date: '2026-09-02',
+      dayName: 'Pernas',
+      exercises: [{ exerciseId: 'Leg_Press', sets: [{ weight: 120, reps: 8 }] }],
+    }
+    await importAll(backupWith({ schemaVersion: 2, trainingLog: [sessionV2] }))
+    expect(await db.table('trainingLog').toArray()).toEqual([sessionV2])
   })
 })

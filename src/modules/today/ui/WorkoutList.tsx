@@ -1,4 +1,5 @@
 import { useConfig } from '@/entities/config'
+import { exerciseName } from '@/entities/exercise-catalog'
 import { useTrainingLog } from '@/entities/training-log'
 import { cn } from '@/shared/lib/cn'
 import { Section } from '@/shared/ui/Page'
@@ -12,7 +13,7 @@ function Hero({ row }: { row: WorkoutRow }) {
   return (
     <div className="flex flex-col gap-2">
       <p className="font-display text-graphite text-[28px] leading-none font-black uppercase">
-        {row.name}
+        {exerciseName(row.exerciseId)}
       </p>
       <div className="flex items-baseline gap-2">
         <span className="font-display text-graphite text-5xl leading-[0.8] font-black">
@@ -38,7 +39,9 @@ function Hero({ row }: { row: WorkoutRow }) {
 function RestRow({ row }: { row: WorkoutRow }) {
   return (
     <li className="flex items-baseline justify-between gap-3">
-      <span className="text-graphite min-w-0 truncate text-sm font-medium">{row.name}</span>
+      <span className="text-graphite min-w-0 truncate text-sm font-medium">
+        {exerciseName(row.exerciseId)}
+      </span>
       {row.last === null ? (
         <span className="text-graphite-soft shrink-0 text-xs">{row.target}</span>
       ) : (
@@ -69,9 +72,14 @@ export function WorkoutList() {
     return (
       <Section label="treino de hoje">
         <ul className="flex flex-col gap-2">
-          {workout.rows.map((row) => (
-            <li key={row.name} className="flex items-baseline justify-between gap-3">
-              <span className="text-graphite min-w-0 truncate text-sm font-medium">{row.name}</span>
+          {workout.rows.map((row, index) => (
+            <li
+              key={`${index}:${row.exerciseId}`}
+              className="flex items-baseline justify-between gap-3"
+            >
+              <span className="text-graphite min-w-0 truncate text-sm font-medium">
+                {exerciseName(row.exerciseId)}
+              </span>
               <span className="text-graphite-soft shrink-0 text-xs">{row.target}</span>
             </li>
           ))}
@@ -89,8 +97,8 @@ export function WorkoutList() {
       {rest.length > 0 && (
         <Section label="resto do treino">
           <ul className="flex flex-col gap-2.5">
-            {rest.map((row) => (
-              <RestRow key={row.name} row={row} />
+            {rest.map((row, index) => (
+              <RestRow key={`${index}:${row.exerciseId}`} row={row} />
             ))}
           </ul>
         </Section>

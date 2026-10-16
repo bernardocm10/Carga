@@ -54,17 +54,17 @@ describe('setMacro', () => {
 
 describe('addExercise', () => {
   it('adiciona no fim do dia certo', () => {
-    const out = addExercise(EMPTY, day, { name: 'Supino reto', sets: 4, reps: '4-6' })
-    expect(exercisesOf(out, day)).toEqual([{ name: 'Supino reto', sets: 4, reps: '4-6' }])
+    const out = addExercise(EMPTY, day, { exerciseId: 'Hammer_Curls', sets: 4, reps: '4-6' })
+    expect(exercisesOf(out, day)).toEqual([{ exerciseId: 'Hammer_Curls', sets: 4, reps: '4-6' }])
     expect(exercisesOf(out, 2)).toEqual([])
   })
 })
 
 describe('setExercise', () => {
   it('aplica um patch raso no exercício do índice', () => {
-    const base = addExercise(EMPTY, day, { name: 'Supino', sets: 3, reps: '8-10' })
+    const base = addExercise(EMPTY, day, { exerciseId: 'Hammer_Curls', sets: 3, reps: '8-10' })
     const out = setExercise(base, day, 0, { sets: 5 })
-    expect(exercisesOf(out, day)[0]).toEqual({ name: 'Supino', sets: 5, reps: '8-10' })
+    expect(exercisesOf(out, day)[0]).toEqual({ exerciseId: 'Hammer_Curls', sets: 5, reps: '8-10' })
   })
 
   it('índice fora do range é no-op', () => {
@@ -75,24 +75,24 @@ describe('setExercise', () => {
 
 describe('removeExercise', () => {
   it('remove pelo índice', () => {
-    let base = addExercise(EMPTY, day, { name: 'A', sets: 3, reps: '8' })
-    base = addExercise(base, day, { name: 'B', sets: 3, reps: '8' })
+    let base = addExercise(EMPTY, day, { exerciseId: 'A', sets: 3, reps: '8' })
+    base = addExercise(base, day, { exerciseId: 'B', sets: 3, reps: '8' })
     const out = removeExercise(base, day, 0)
-    expect(exercisesOf(out, day).map((e) => e.name)).toEqual(['B'])
+    expect(exercisesOf(out, day).map((e) => e.exerciseId)).toEqual(['B'])
   })
 })
 
 describe('moveExercise', () => {
   it('troca com o vizinho na direção', () => {
-    let base = addExercise(EMPTY, day, { name: 'A', sets: 3, reps: '8' })
-    base = addExercise(base, day, { name: 'B', sets: 3, reps: '8' })
-    base = addExercise(base, day, { name: 'C', sets: 3, reps: '8' })
-    expect(exercisesOf(moveExercise(base, day, 0, 1), day).map((e) => e.name)).toEqual([
+    let base = addExercise(EMPTY, day, { exerciseId: 'A', sets: 3, reps: '8' })
+    base = addExercise(base, day, { exerciseId: 'B', sets: 3, reps: '8' })
+    base = addExercise(base, day, { exerciseId: 'C', sets: 3, reps: '8' })
+    expect(exercisesOf(moveExercise(base, day, 0, 1), day).map((e) => e.exerciseId)).toEqual([
       'B',
       'A',
       'C',
     ])
-    expect(exercisesOf(moveExercise(base, day, 2, -1), day).map((e) => e.name)).toEqual([
+    expect(exercisesOf(moveExercise(base, day, 2, -1), day).map((e) => e.exerciseId)).toEqual([
       'A',
       'C',
       'B',
@@ -100,9 +100,9 @@ describe('moveExercise', () => {
   })
 
   it('nos limites é no-op', () => {
-    const base = addExercise(EMPTY, day, { name: 'A', sets: 3, reps: '8' })
-    expect(exercisesOf(moveExercise(base, day, 0, -1), day).map((e) => e.name)).toEqual(['A'])
-    expect(exercisesOf(moveExercise(base, day, 0, 1), day).map((e) => e.name)).toEqual(['A'])
+    const base = addExercise(EMPTY, day, { exerciseId: 'A', sets: 3, reps: '8' })
+    expect(exercisesOf(moveExercise(base, day, 0, -1), day).map((e) => e.exerciseId)).toEqual(['A'])
+    expect(exercisesOf(moveExercise(base, day, 0, 1), day).map((e) => e.exerciseId)).toEqual(['A'])
   })
 })
 

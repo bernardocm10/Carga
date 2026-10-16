@@ -34,9 +34,9 @@ export function TrainingScreen() {
             <span className="text-graphite font-semibold">{day.name}</span> · {day.focus}
           </p>
           <ul className="border-hairline flex flex-col border-t">
-            {day.exercises.map((exercise) => (
+            {day.exercises.map((exercise, index) => (
               <ExerciseCard
-                key={exercise.name}
+                key={`${index}:${exercise.exerciseId}`}
                 exercise={exercise}
                 dayName={day.name}
                 date={date}

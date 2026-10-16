@@ -6,13 +6,14 @@
 
 IndexedDB via **Dexie**, instância única em `src/shared/db/db.ts` (banco `claudgym`). Só `src/shared/db/` importa `dexie` (regra de lint).
 
-| Tabela          | Chave  | Conteúdo                                          |
-| --------------- | ------ | ------------------------------------------------- |
-| `config`        | `id`   | `{ id: 'main', config: Config }`                  |
-| `weightLog`     | `date` | `WeightEntry`                                     |
-| `trainingLog`   | `date` | `TrainingSession`                                 |
-| `supplementLog` | `date` | `SupplementDay`                                   |
-| `meta`          | `key`  | `{ key, value }` — ex. `importedFromLocalStorage` |
+| Tabela          | Chave        | Conteúdo                                          |
+| --------------- | ------------ | ------------------------------------------------- |
+| `config`        | `id`         | `{ id: 'main', config: Config }`                  |
+| `weightLog`     | `date`       | `WeightEntry`                                     |
+| `trainingLog`   | `date`       | `TrainingSession`                                 |
+| `supplementLog` | `date`       | `SupplementDay`                                   |
+| `meta`          | `key`        | `{ key, value }` — ex. `importedFromLocalStorage` |
+| `imageChoice`   | `exerciseId` | `{ exerciseId, variantIndex }` — foto escolhida   |
 
 Nenhum arquivo fora de `shared/db` e dos `*.repo.ts` conhece nomes de tabela.
 
@@ -27,8 +28,9 @@ Nenhum arquivo fora de `shared/db` e dos `*.repo.ts` conhece nomes de tabela.
 
 ## 5.3 Versão de schema e migração
 
-- `DB_VERSION` em `shared/db/db.ts`. Toda mudança de formato persistido = nova `db.version(n).stores(...).upgrade(...)` + teste.
-- A transformação de dado do `upgrade` é escrita como **função pura** e reaproveitada pelo `importAll` para backups de versão antiga.
+- `DB_VERSION` em `shared/db/db.ts` (hoje **2**). Toda mudança de formato persistido = nova `version(n).stores(...).upgrade(...)` dentro de `defineSchema` + teste que cria o banco na versão anterior (ver `db.test.ts`).
+- A transformação de dado é **função pura** em `shared/db/migrations/` e reaproveitada pelo `upgrade`, por `importLegacyLocalStorage` e por `importAll` (backups de versão antiga).
+- **v1 → v2**: exercício deixa de ser nome e vira `exerciseId` (`migrateV1toV2` + `LEGACY_NAME_MAP`). Nome fora do mapa vira `legacy:<nome>` (aparece com o nome antigo, sem foto). O mapa é **congelado**: nunca editar, só acrescentar numa migração nova.
 
 ## 5.4 Legado (localStorage)
 
@@ -39,3 +41,7 @@ Nenhum arquivo fora de `shared/db` e dos `*.repo.ts` conhece nomes de tabela.
 - `exportAll()` → JSON `{ app, schemaVersion, exportedAt, config, weightLog, trainingLog, supplementLog }`.
 - `importAll(json)` valida o arquivo inteiro antes de escrever (`BackupError` com mensagem pronta pra UI), recusa versão mais nova que o app e substitui config + logs numa transação. `meta` não é tocado.
 - Aba **Ajustes → Backup**: exportar abre o share sheet no Android (`@capacitor/filesystem` + `@capacitor/share`) e baixa o arquivo no navegador; importar pede confirmação e recarrega o app.
+
+## 5.6 Catálogo de exercícios
+
+Somente leitura, vive no código (não no banco): `entities/exercise-catalog/data/catalog.json` (gerado) + `data/custom.ts` (entradas `cg:` que reaproveitam fotos do acervo). Fotos em `public/exercises/<id>/<0|1>.webp`. Para regenerar: `npm run catalog:build` (rede necessária; commit do acervo fixado no script). Só a escolha de foto por exercício (`imageChoice`) é dado do usuário.

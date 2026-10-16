@@ -6,17 +6,19 @@ function session(date: string, sets: Array<[number, number]>): TrainingSession {
   return {
     date,
     dayName: 'Push A',
-    exercises: [{ name: 'Supino reto', sets: sets.map(([weight, reps]) => ({ weight, reps })) }],
+    exercises: [
+      { exerciseId: 'Hammer_Curls', sets: sets.map(([weight, reps]) => ({ weight, reps })) },
+    ],
   }
 }
 
 describe('lastLoadForExercise', () => {
   it('sem histórico -> undefined', () => {
-    expect(lastLoadForExercise([], 'Supino reto')).toBeUndefined()
+    expect(lastLoadForExercise([], 'Hammer_Curls')).toBeUndefined()
   })
 
   it('devolve as séries da sessão que contém o exercício', () => {
-    const out = lastLoadForExercise([session('2026-08-10', [[40, 6]])], 'Supino reto')
+    const out = lastLoadForExercise([session('2026-08-10', [[40, 6]])], 'Hammer_Curls')
     expect(out).toEqual({
       date: '2026-08-10',
       sets: [{ weight: 40, reps: 6 }],
@@ -27,7 +29,7 @@ describe('lastLoadForExercise', () => {
   it('pega a sessão mais recente entre várias', () => {
     const out = lastLoadForExercise(
       [session('2026-08-01', [[35, 8]]), session('2026-08-12', [[42, 5]])],
-      'Supino reto',
+      'Hammer_Curls',
     )
     expect(out?.date).toBe('2026-08-12')
   })
@@ -35,23 +37,23 @@ describe('lastLoadForExercise', () => {
   it('before exclui sessões nessa data ou depois', () => {
     const out = lastLoadForExercise(
       [session('2026-08-01', [[35, 8]]), session('2026-08-12', [[42, 5]])],
-      'Supino reto',
+      'Hammer_Curls',
       '2026-08-12',
     )
     expect(out?.date).toBe('2026-08-01')
   })
 
   it('exercício ausente em todas -> undefined', () => {
-    expect(lastLoadForExercise([session('2026-08-10', [[40, 6]])], 'Agachamento')).toBeUndefined()
+    expect(lastLoadForExercise([session('2026-08-10', [[40, 6]])], 'Leg_Press')).toBeUndefined()
   })
 
   it('exercício presente mas sem séries -> undefined', () => {
     const empty: TrainingSession = {
       date: '2026-08-10',
       dayName: 'Push A',
-      exercises: [{ name: 'Supino reto', sets: [] }],
+      exercises: [{ exerciseId: 'Hammer_Curls', sets: [] }],
     }
-    expect(lastLoadForExercise([empty], 'Supino reto')).toBeUndefined()
+    expect(lastLoadForExercise([empty], 'Hammer_Curls')).toBeUndefined()
   })
 
   it('topSet é a série mais pesada, desempatando por reps', () => {
@@ -63,7 +65,7 @@ describe('lastLoadForExercise', () => {
           [45, 6],
         ]),
       ],
-      'Supino reto',
+      'Hammer_Curls',
     )
     expect(out?.topSet).toEqual({ weight: 45, reps: 6 })
   })
