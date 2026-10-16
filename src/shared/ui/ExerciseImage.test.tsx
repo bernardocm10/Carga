@@ -97,6 +97,12 @@ describe('ExerciseImage · arrastar', () => {
 })
 
 describe('ExerciseImage · vista ampliada', () => {
+  it('renderiza no body, fora de ancestrais com transform', () => {
+    const { thumb } = setup([A])
+    fireEvent.click(thumb!)
+    expect(screen.getByRole('dialog').parentElement).toBe(document.body)
+  })
+
   it('toque abre e alterna início/fim a cada ~1 s; fechar remove', () => {
     vi.useFakeTimers()
     const { thumb } = setup([A])

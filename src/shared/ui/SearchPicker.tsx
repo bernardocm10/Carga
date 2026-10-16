@@ -1,4 +1,5 @@
 import { useId, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { Button } from './Button'
 
 type Props<T> = {
@@ -25,7 +26,7 @@ export function SearchPicker<T>({
   const [query, setQuery] = useState('')
   const titleId = useId()
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -70,6 +71,7 @@ export function SearchPicker<T>({
           ))}
         </ul>
       )}
-    </div>
+    </div>,
+    document.body,
   )
 }

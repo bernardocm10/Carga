@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type PointerEvent } from 'react'
 import { Dumbbell } from 'lucide-react'
+import { createPortal } from 'react-dom'
 import { cn } from '@/shared/lib/cn'
 
 const SWIPE_PX = 40
@@ -59,7 +60,7 @@ function Viewer({ images, alt, onClose, swipeHandlers }: ViewerProps) {
     return () => clearInterval(timer)
   }, [images.length])
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
@@ -80,7 +81,8 @@ function Viewer({ images, alt, onClose, swipeHandlers }: ViewerProps) {
       >
         Fechar
       </button>
-    </div>
+    </div>,
+    document.body,
   )
 }
 

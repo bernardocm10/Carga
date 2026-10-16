@@ -30,6 +30,11 @@ function setup(
 }
 
 describe('SearchPicker', () => {
+  it('renderiza no body, fora de ancestrais com transform', () => {
+    setup()
+    expect(screen.getByRole('dialog').parentElement).toBe(document.body)
+  })
+
   it('lista os itens e entrega o escolhido', async () => {
     const { onPick } = setup()
     await userEvent.click(screen.getByRole('button', { name: 'Beta' }))
