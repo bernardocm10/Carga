@@ -7,7 +7,11 @@ import { weekStatus } from './weekStatus'
 const THURSDAY = new Date(2026, 8, 3)
 
 function sessionOn(date: string): TrainingSession {
-  return { date, dayName: 'Treino', exercises: [{ name: 'X', sets: [{ weight: 1, reps: 1 }] }] }
+  return {
+    date,
+    dayName: 'Treino',
+    exercises: [{ exerciseId: 'Hammer_Curls', sets: [{ weight: 1, reps: 1 }] }],
+  }
 }
 
 describe('weekStatus', () => {

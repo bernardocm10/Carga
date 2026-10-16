@@ -2,7 +2,7 @@ import { trainingDayForDate, type Config } from '@/entities/config'
 import { lastLoadForExercise, type TrainingSession } from '@/entities/training-log'
 
 export type WorkoutRow = {
-  name: string
+  exerciseId: string
   /** alvo da Config, ex. "4×8" */
   target: string
   /** kg do topSet da última sessão que teve o exercício; null sem histórico */
@@ -30,14 +30,14 @@ export function todayWorkout(
   }
 
   const rows = day.exercises.map((exercise): WorkoutRow => {
-    const latest = lastLoadForExercise(sessions, exercise.name)
+    const latest = lastLoadForExercise(sessions, exercise.exerciseId)
     let delta: number | null = null
     if (latest !== undefined) {
-      const previous = lastLoadForExercise(sessions, exercise.name, latest.date)
+      const previous = lastLoadForExercise(sessions, exercise.exerciseId, latest.date)
       if (previous !== undefined) delta = latest.topSet.weight - previous.topSet.weight
     }
     return {
-      name: exercise.name,
+      exerciseId: exercise.exerciseId,
       target: `${exercise.sets}×${exercise.reps}`,
       last: latest?.topSet.weight ?? null,
       delta,

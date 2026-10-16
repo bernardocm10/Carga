@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CONFIG_SEED, useConfigStore } from '@/entities/config'
 import { useTrainingLogStore } from '@/entities/training-log'
@@ -32,7 +32,7 @@ describe('TrainingScreen', () => {
           weekday: 1,
           name: 'Push A',
           focus: 'Força',
-          exercises: [{ name: 'Supino reto', sets: 4, reps: '4-6' }],
+          exercises: [{ exerciseId: 'Hammer_Curls', sets: 4, reps: '4-6' }],
         },
       ],
     })
@@ -48,9 +48,54 @@ describe('TrainingScreen', () => {
     expect(stored).toEqual([
       expect.objectContaining({
         dayName: 'Push A',
-        exercises: [{ name: 'Supino reto', sets: [{ weight: 40, reps: 6 }] }],
+        exercises: [{ exerciseId: 'Hammer_Curls', sets: [{ weight: 40, reps: 6 }] }],
       }),
     ])
     expect(screen.getByText('40kg × 6')).toBeInTheDocument()
+    expect(screen.getByText('Hammer Curls')).toBeInTheDocument()
+  })
+
+  it('mostra o nome original de um exercício legacy', () => {
+    useConfigStore.getState().replaceConfig({
+      ...CONFIG_SEED,
+      trainingSplit: [
+        {
+          weekday: 1,
+          name: 'Push A',
+          focus: 'Força',
+          exercises: [{ exerciseId: 'legacy:Supino reto', sets: 4, reps: '4-6' }],
+        },
+      ],
+    })
+    render(<TrainingScreen />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Seg' }))
+
+    expect(screen.getByText('Supino reto')).toBeInTheDocument()
+  })
+
+  it('exercício repetido no dia renderiza duas linhas sem erro de key', () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    useConfigStore.getState().replaceConfig({
+      ...CONFIG_SEED,
+      trainingSplit: [
+        {
+          weekday: 1,
+          name: 'Push A',
+          focus: 'Força',
+          exercises: [
+            { exerciseId: 'Hammer_Curls', sets: 3, reps: '8' },
+            { exerciseId: 'Hammer_Curls', sets: 2, reps: '12' },
+          ],
+        },
+      ],
+    })
+    render(<TrainingScreen />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Seg' }))
+
+    expect(screen.getAllByText('Hammer Curls')).toHaveLength(2)
+    expect(error).not.toHaveBeenCalled()
+    error.mockRestore()
   })
 })

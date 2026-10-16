@@ -1,6 +1,6 @@
 export type LoggedSet = { weight: number; reps: number }
 
-export type LoggedExercise = { name: string; sets: LoggedSet[] }
+export type LoggedExercise = { exerciseId: string; sets: LoggedSet[] }
 
 export type TrainingSession = {
   /** ISO `YYYY-MM-DD` */

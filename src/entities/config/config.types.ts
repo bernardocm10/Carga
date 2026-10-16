@@ -11,7 +11,8 @@ export type Supplement = {
 }
 
 export type Exercise = {
-  name: string
+  /** id do exercise-catalog: do acervo, `cg:<slug>` ou `legacy:<nome>` */
+  exerciseId: string
   sets: number
   /** faixa de repetições como texto livre, ex: "4-6" */
   reps: string

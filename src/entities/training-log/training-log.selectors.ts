@@ -13,14 +13,14 @@ export type LastLoad = {
  */
 export function lastLoadForExercise(
   sessions: TrainingSession[],
-  exerciseName: string,
+  exerciseId: string,
   before?: string,
 ): LastLoad | undefined {
   const latest = sessions
     .filter((s) => before === undefined || s.date < before)
     .map((s) => ({
       date: s.date,
-      sets: s.exercises.find((e) => e.name === exerciseName)?.sets ?? [],
+      sets: s.exercises.find((e) => e.exerciseId === exerciseId)?.sets ?? [],
     }))
     .filter((s) => s.sets.length > 0)
     .sort((a, b) => b.date.localeCompare(a.date))

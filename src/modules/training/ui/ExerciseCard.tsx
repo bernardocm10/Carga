@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import type { Exercise } from '@/entities/config'
+import { exerciseName } from '@/entities/exercise-catalog'
 import { useTrainingLog, useTrainingLogStore } from '@/entities/training-log'
 import { cn } from '@/shared/lib/cn'
 import { useLeave } from '@/shared/lib/useLeave'
@@ -51,8 +52,8 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
   const loggedSets =
     sessions
       .find((session) => session.date === date)
-      ?.exercises.find((entry) => entry.name === exercise.name)?.sets ?? []
-  const last = lastLoadForExercise(sessions, exercise.name, date)
+      ?.exercises.find((entry) => entry.exerciseId === exercise.exerciseId)?.sets ?? []
+  const last = lastLoadForExercise(sessions, exercise.exerciseId, date)
 
   const add = (event: FormEvent) => {
     event.preventDefault()
@@ -60,7 +61,7 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
     const parsedReps = Math.round(Number(reps.replace(',', '.')))
     if (!Number.isFinite(parsedWeight) || parsedWeight <= 0) return
     if (!Number.isFinite(parsedReps) || parsedReps <= 0) return
-    logSet(date, dayName, exercise.name, { weight: parsedWeight, reps: parsedReps })
+    logSet(date, dayName, exercise.exerciseId, { weight: parsedWeight, reps: parsedReps })
     setWeight('')
     setReps('')
   }
@@ -68,7 +69,9 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
   return (
     <li className="border-hairline flex flex-col gap-3 border-b py-4">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-graphite text-sm font-semibold">{exercise.name}</span>
+        <span className="text-graphite text-sm font-semibold">
+          {exerciseName(exercise.exerciseId)}
+        </span>
         <span className="text-graphite-soft shrink-0 text-xs">
           {exercise.sets}×{exercise.reps}
         </span>
@@ -87,7 +90,7 @@ export function ExerciseCard({ exercise, dayName, date }: Props) {
               key={index}
               index={index}
               label={`${set.weight}kg × ${set.reps}`}
-              onRemove={() => removeSet(date, exercise.name, index)}
+              onRemove={() => removeSet(date, exercise.exerciseId, index)}
             />
           ))}
         </ul>
