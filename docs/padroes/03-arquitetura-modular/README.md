@@ -59,7 +59,8 @@ src/
 │   │   └── config.types.ts
 │   ├── weight-log/           # useWeightLog(), addWeightEntry(), WeightEntry
 │   ├── training-log/
-│   └── supplement-log/
+│   ├── supplement-log/
+│   └── exercise-catalog/     # catálogo read-only: exerciseById(), exerciseName(), searchExercises(), useImageChoice()
 │
 ├── shared/
 │   ├── ui/                # Card, NumberField, Button, Tag, Sheet, WeekStrip, LoadedBar
