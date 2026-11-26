@@ -29,6 +29,19 @@
 
 ## Versionamento
 
-- Versão do app em `package.json` (semver).
+- Versão do app em `package.json`, no esquema [Pride Versioning](https://pridever.org) `PROUD.DEFAULT.SHAME`:
+  - **PROUD** — release de que dá orgulho;
+  - **DEFAULT** — release normal, "ok";
+  - **SHAME** — conserto vergonhoso demais pra admitir.
+- O Android deriva tudo do `package.json`: `versionName` = versão, `versionCode` = `PROUD·1_000_000 + DEFAULT·1_000 + SHAME` (por isso DEFAULT e SHAME ficam abaixo de 1000).
+
+## Release
+
+1. Subir a versão no `package.json` (e no `package-lock.json`, via `npm version <x.y.z> --no-git-tag-version`) e commitar: `chore: [release] - bump version to x.y.z`.
+2. Criar e enviar a tag `vX.Y.Z` (tem que bater com o `package.json`): `git tag vX.Y.Z && git push origin vX.Y.Z`.
+3. O workflow [`release.yml`](../../../.github/workflows/release.yml) roda typecheck, lint e testes, gera o APK e publica a GitHub Release com o `.apk` anexado. Versões `0.*` saem como pre-release.
+4. Assinatura: com os secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` e `ANDROID_KEY_PASSWORD` o APK sai com a chave de release. Sem eles, sai com uma chave de debug descartável — serve pra teste, mas a próxima release não instala por cima sem desinstalar (e desinstalar apaga os dados: exportar o backup antes).
+5. Build local: `android/keystore.properties` (ignorado pelo git) com `storeFile`, `storePassword`, `keyAlias`, `keyPassword`; depois `npm run cap:sync && cd android && ./gradlew assembleRelease`.
+
 - Versão do formato de dados em `SCHEMA_VERSION` ([doc 05](../05-dados-e-storage/README.md)) — independente da versão do app.
 - `CHANGELOG.md`: manter só se passar a ser útil; não obrigatório na v1.
