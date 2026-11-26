@@ -1,4 +1,18 @@
+import groovy.json.JsonSlurper
+
 apply plugin: 'com.android.application'
+
+def appVersionName = new JsonSlurper().parse(rootProject.file('../package.json')).version
+def (proud, defaultPart, shame) = appVersionName.tokenize('.')*.toInteger()
+def appVersionCode = proud * 1_000_000 + defaultPart * 1_000 + shame
+
+def keystoreProps = new Properties()
+def keystorePropsFile = rootProject.file('keystore.properties')
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+def signingValue = { String prop, String env -> keystoreProps.getProperty(prop) ?: System.getenv(env) }
+def releaseStoreFile = signingValue('storeFile', 'CLAUDGYM_KEYSTORE_PATH')
 
 android {
     namespace = "com.bernardocm.claudgym"
@@ -7,8 +21,8 @@ android {
         applicationId "com.bernardocm.claudgym"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,8 +30,22 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (releaseStoreFile) {
+                storeFile rootProject.file(releaseStoreFile)
+                storePassword signingValue('storePassword', 'CLAUDGYM_KEYSTORE_PASSWORD')
+                keyAlias signingValue('keyAlias', 'CLAUDGYM_KEY_ALIAS')
+                keyPassword signingValue('keyPassword', 'CLAUDGYM_KEY_PASSWORD')
+            }
+        }
+    }
     buildTypes {
         release {
+            if (!releaseStoreFile) {
+                logger.warn('claudgym: no release keystore configured, signing release with the debug key')
+            }
+            signingConfig releaseStoreFile ? signingConfigs.release : signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
