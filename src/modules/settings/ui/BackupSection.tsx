@@ -14,7 +14,7 @@ export function BackupSection() {
   const exportBackup = async () => {
     setError(null)
     try {
-      await shareTextFile(`claudgym-backup-${toISODate(new Date())}.json`, await exportAll())
+      await shareTextFile(`carga-backup-${toISODate(new Date())}.json`, await exportAll())
     } catch (cause) {
       console.error('[backup] export', cause)
       setError('Não foi possível exportar o backup.')

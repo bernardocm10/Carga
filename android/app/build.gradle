@@ -12,13 +12,13 @@ if (keystorePropsFile.exists()) {
     keystorePropsFile.withInputStream { keystoreProps.load(it) }
 }
 def signingValue = { String prop, String env -> keystoreProps.getProperty(prop) ?: System.getenv(env) }
-def releaseStoreFile = signingValue('storeFile', 'CLAUDGYM_KEYSTORE_PATH')
+def releaseStoreFile = signingValue('storeFile', 'CARGA_KEYSTORE_PATH')
 
 android {
-    namespace = "com.bernardocm.claudgym"
+    namespace = "com.bernardocm.carga"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.bernardocm.claudgym"
+        applicationId "com.bernardocm.carga"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode appVersionCode
@@ -34,16 +34,16 @@ android {
         release {
             if (releaseStoreFile) {
                 storeFile rootProject.file(releaseStoreFile)
-                storePassword signingValue('storePassword', 'CLAUDGYM_KEYSTORE_PASSWORD')
-                keyAlias signingValue('keyAlias', 'CLAUDGYM_KEY_ALIAS')
-                keyPassword signingValue('keyPassword', 'CLAUDGYM_KEY_PASSWORD')
+                storePassword signingValue('storePassword', 'CARGA_KEYSTORE_PASSWORD')
+                keyAlias signingValue('keyAlias', 'CARGA_KEY_ALIAS')
+                keyPassword signingValue('keyPassword', 'CARGA_KEY_PASSWORD')
             }
         }
     }
     buildTypes {
         release {
             if (!releaseStoreFile) {
-                logger.warn('claudgym: no release keystore configured, signing release with the debug key')
+                logger.warn('carga: no release keystore configured, signing release with the debug key')
             }
             signingConfig releaseStoreFile ? signingConfigs.release : signingConfigs.debug
             minifyEnabled false

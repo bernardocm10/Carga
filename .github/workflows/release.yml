@@ -41,20 +41,20 @@ jobs:
       - name: Build release APK
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          CLAUDGYM_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          CLAUDGYM_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          CLAUDGYM_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          CARGA_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          CARGA_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          CARGA_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
-            export CLAUDGYM_KEYSTORE_PATH="$RUNNER_TEMP/release.keystore"
+            export CARGA_KEYSTORE_PATH="$RUNNER_TEMP/release.keystore"
             echo "SIGNED_WITH=release" >> "$GITHUB_ENV"
           else
             echo "::warning::no keystore in secrets, APK signed with a throwaway debug key"
             echo "SIGNED_WITH=debug" >> "$GITHUB_ENV"
           fi
           (cd android && ./gradlew assembleRelease --no-daemon)
-          cp android/app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/claudgym-$GITHUB_REF_NAME.apk"
+          cp android/app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/carga-$GITHUB_REF_NAME.apk"
 
       - name: Publish GitHub release
         env:
@@ -68,10 +68,10 @@ jobs:
           if [ "$SIGNED_WITH" = "debug" ]; then
             NOTES="Test build signed with a throwaway debug key: the next release will not install over it without uninstalling first (export your backup before)."
           fi
-          APK="$RUNNER_TEMP/claudgym-$GITHUB_REF_NAME.apk"
+          APK="$RUNNER_TEMP/carga-$GITHUB_REF_NAME.apk"
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" "$APK" --clobber
           else
             gh release create "$GITHUB_REF_NAME" "$APK" \
-              --title "claudgym $GITHUB_REF_NAME" --notes "$NOTES" $FLAGS
+              --title "Carga $GITHUB_REF_NAME" --notes "$NOTES" $FLAGS
           fi

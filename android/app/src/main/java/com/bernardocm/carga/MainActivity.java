@@ -1,4 +1,4 @@
-package com.bernardocm.claudgym;
+package com.bernardocm.carga;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -4,7 +4,7 @@
 
 ## 5.1 Banco
 
-IndexedDB via **Dexie**, instância única em `src/shared/db/db.ts` (banco `claudgym`). Só `src/shared/db/` importa `dexie` (regra de lint).
+IndexedDB via **Dexie**, instância única em `src/shared/db/db.ts` (banco `claudgym`). `claudgym` é o nome legado de antes do app virar **Carga** e continua de propósito no nome do banco e no campo `app` do backup: renomear apaga os dados locais e invalida backups antigos. Só `src/shared/db/` importa `dexie` (regra de lint).
 
 | Tabela          | Chave        | Conteúdo                                          |
 | --------------- | ------------ | ------------------------------------------------- |

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">claudgym</string>
-    <string name="title_activity_main">claudgym</string>
-    <string name="package_name">com.bernardocm.claudgym</string>
-    <string name="custom_url_scheme">com.bernardocm.claudgym</string>
+    <string name="app_name">Carga</string>
+    <string name="title_activity_main">Carga</string>
+    <string name="package_name">com.bernardocm.carga</string>
+    <string name="custom_url_scheme">com.bernardocm.carga</string>
 </resources>

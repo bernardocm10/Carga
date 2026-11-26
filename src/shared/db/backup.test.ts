@@ -108,7 +108,7 @@ describe('importAll', () => {
 
   it.each([
     ['JSON inválido', '{quebrado', 'O arquivo não é um JSON válido.'],
-    ['outro app', JSON.stringify({ app: 'outro' }), 'Esse arquivo não é um backup do claudgym.'],
+    ['outro app', JSON.stringify({ app: 'outro' }), 'Esse arquivo não é um backup do Carga.'],
     [
       'versão futura',
       JSON.stringify({ app: 'claudgym', schemaVersion: 99 }),

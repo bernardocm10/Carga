@@ -63,9 +63,9 @@ function parseBackup(json: string): BackupFile {
   const file = (typeof raw === 'object' && raw !== null ? raw : {}) as Partial<
     Record<keyof BackupFile, unknown>
   >
-  if (file.app !== 'claudgym') throw new BackupError('Esse arquivo não é um backup do claudgym.')
+  if (file.app !== 'claudgym') throw new BackupError('Esse arquivo não é um backup do Carga.')
   if (typeof file.schemaVersion !== 'number') {
-    throw new BackupError('Esse arquivo não é um backup do claudgym.')
+    throw new BackupError('Esse arquivo não é um backup do Carga.')
   }
   if (file.schemaVersion > DB_VERSION) {
     throw new BackupError(

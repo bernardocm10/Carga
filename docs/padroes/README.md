@@ -1,6 +1,6 @@
 # 🧱 Padrões de Desenvolvimento — v1
 
-> Este é o **índice** dos padrões de desenvolvimento do `claudgym`.
+> Este é o **índice** dos padrões de desenvolvimento do **Carga**.
 > Define **como** o código é escrito, organizado e versionado.
 > Complementa o [`app_arquitetura_v1.md`](../app_arquitetura_v1.md), que descreve **o que** o app faz.
 
