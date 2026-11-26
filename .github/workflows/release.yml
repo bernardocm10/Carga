@@ -68,5 +68,10 @@ jobs:
           if [ "$SIGNED_WITH" = "debug" ]; then
             NOTES="Test build signed with a throwaway debug key: the next release will not install over it without uninstalling first (export your backup before)."
           fi
-          gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP/claudgym-$GITHUB_REF_NAME.apk" \
-            --title "claudgym $GITHUB_REF_NAME" --notes "$NOTES" $FLAGS
+          APK="$RUNNER_TEMP/claudgym-$GITHUB_REF_NAME.apk"
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$APK" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$APK" \
+              --title "claudgym $GITHUB_REF_NAME" --notes "$NOTES" $FLAGS
+          fi
